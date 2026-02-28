@@ -11,10 +11,25 @@ class ApplicationController < ActionController::Base
   private
 
   def set_current_date
+    today = Date.current.beginning_of_month
+    min_date = today - 24.months
+
+    latest_entry = [
+      current_user.expenses.maximum(:date),
+      current_user.incomes.maximum(:date)
+    ].compact.max
+    latest_month = latest_entry&.beginning_of_month
+    @max_date = [ today + 12.months, latest_month ].compact.max
+
     if params[:month].present?
-      @current_date = Date.parse("#{params[:month]}-01")
+      date = Date.parse("#{params[:month]}-01")
+      date = date.clamp(min_date, @max_date)
+      session[:current_month] = date.strftime("%Y-%m")
+      @current_date = date
+    elsif session[:current_month].present?
+      @current_date = Date.parse("#{session[:current_month]}-01").clamp(min_date, @max_date)
     else
-      @current_date = Date.current.beginning_of_month
+      @current_date = today
     end
   rescue ArgumentError
     @current_date = Date.current.beginning_of_month

@@ -1,14 +1,14 @@
-<aside class="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-30 lg:flex lg:w-60 lg:flex-col border-r"
+<aside class="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-30 lg:flex lg:w-60 lg:flex-col border-r overflow-hidden"
        style="background-color: #1A1D27; border-color: #2A2F45;"
-       data-sidebar-target="sidebar">
+       data-sidebar-target="panel">
 
   <%# Logo %>
-  <div class="flex h-16 items-center px-6 border-b" style="border-color: #2A2F45;">
-    <div class="flex items-center gap-2">
-      <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background-color: #6C63FF;">
+  <div class="flex h-16 items-center px-4 border-b flex-shrink-0" style="border-color: #2A2F45;">
+    <div class="flex items-center gap-2 min-w-0">
+      <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background-color: #6C63FF;">
         <%= svg_icon "wallet", css_class: "w-4 h-4", stroke: "white" %>
       </div>
-      <span class="font-bold text-lg" style="color: #E2E8F0;">FinTrack</span>
+      <span class="font-bold text-lg truncate" style="color: #E2E8F0;" data-sidebar-target="label">FinTrack</span>
     </div>
   </div>
 
@@ -21,22 +21,23 @@
     <%= render "layouts/nav_item", icon: "trending-up", label: "Investments", path: investments_path, active: controller_name == "investments" %>
     <%= render "layouts/nav_item", icon: "bar-chart-2", label: "Forecast", path: forecast_path, active: controller_name == "forecast" %>
     <%= render "layouts/nav_item", icon: "tag", label: "Categories", path: categories_path, active: controller_name == "categories" %>
+    <%= render "layouts/nav_item", icon: "settings", label: "Settings", path: edit_user_settings_path, active: controller_name == "settings" %>
   </nav>
 
   <%# User section %>
-  <div class="border-t px-3 py-3" style="border-color: #2A2F45;">
+  <div class="border-t px-3 py-3 flex-shrink-0" style="border-color: #2A2F45;">
     <div class="flex items-center gap-3 px-3 py-2 rounded-lg mb-1" style="background-color: rgba(42,47,69,0.5);">
       <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0" style="background-color: #6C63FF; color: white;">
         <%= current_user.name&.first&.upcase || current_user.email.first.upcase %>
       </div>
-      <div class="flex-1 min-w-0">
+      <div class="flex-1 min-w-0" data-sidebar-target="userInfo">
         <p class="text-sm font-medium truncate" style="color: #E2E8F0;"><%= current_user.name || current_user.email.split("@").first %></p>
         <p class="text-xs truncate" style="color: #8892A4;"><%= current_user.currency || "BRL" %></p>
       </div>
     </div>
     <%= link_to destroy_user_session_path, data: { turbo_method: :delete }, class: "flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-white/5", style: "color: #8892A4;" do %>
-      <%= svg_icon "log-out", css_class: "w-4 h-4" %>
-      Sign out
+      <%= svg_icon "log-out", css_class: "w-4 h-4 flex-shrink-0" %>
+      <span data-sidebar-target="label">Sign out</span>
     <% end %>
   </div>
 </aside>

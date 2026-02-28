@@ -17,5 +17,9 @@ Rails.application.routes.draw do
   resources :categories
   get "/forecast", to: "forecast#index", as: :forecast
 
+  namespace :user do
+    resource :settings, only: [:edit, :update]
+  end
+
   get "up" => "rails/health#show", as: :rails_health_check
 end

@@ -1,27 +1,75 @@
 import { Controller } from "@hotwired/stimulus"
 
-export default class extends Controller {
-  static targets = ["sidebar", "overlay"]
+const DESKTOP_BREAKPOINT = 1024
 
+export default class extends Controller {
+  static targets = ["panel", "overlay", "label", "userInfo", "content"]
+
+  connect() {
+    const collapsed = localStorage.getItem("sidebar-collapsed") === "true"
+    if (collapsed) this._applyCollapsed(true, false)
+  }
+
+  // Single toggle: collapses on desktop, shows overlay on mobile
   toggle() {
-    const sidebar = this.element.querySelector("aside")
+    if (window.innerWidth >= DESKTOP_BREAKPOINT) {
+      this.collapseToggle()
+    } else {
+      this._mobileToggle()
+    }
+  }
+
+  close() {
+    const panel = this.panelTarget
     const overlay = this.overlayTarget
 
-    if (sidebar.classList.contains("hidden")) {
-      sidebar.classList.remove("hidden")
-      sidebar.classList.add("flex", "fixed", "inset-y-0", "left-0", "z-30", "w-60", "flex-col")
+    panel.classList.add("hidden")
+    panel.classList.remove("flex", "fixed", "inset-y-0", "left-0", "z-30", "flex-col")
+    panel.style.width = ""
+    overlay.classList.add("hidden")
+  }
+
+  collapseToggle() {
+    const collapsed = localStorage.getItem("sidebar-collapsed") === "true"
+    const next = !collapsed
+    localStorage.setItem("sidebar-collapsed", String(next))
+    this._applyCollapsed(next, true)
+  }
+
+  _mobileToggle() {
+    const panel = this.panelTarget
+    const overlay = this.overlayTarget
+
+    if (panel.classList.contains("hidden")) {
+      panel.classList.remove("hidden")
+      panel.classList.add("flex", "fixed", "inset-y-0", "left-0", "z-30", "flex-col")
+      panel.style.width = "240px"
       overlay.classList.remove("hidden")
     } else {
       this.close()
     }
   }
 
-  close() {
-    const sidebar = this.element.querySelector("aside")
-    const overlay = this.overlayTarget
+  _applyCollapsed(collapsed, animate) {
+    const panel = this.panelTarget
 
-    sidebar.classList.add("hidden")
-    sidebar.classList.remove("flex", "fixed", "inset-y-0", "left-0", "z-30", "w-60", "flex-col")
-    overlay.classList.add("hidden")
+    if (animate) {
+      panel.style.transition = "width 0.2s ease"
+      if (this.hasContentTarget) {
+        this.contentTarget.style.transition = "margin-left 0.2s ease"
+      }
+    }
+
+    if (collapsed) {
+      panel.style.width = "64px"
+      this.labelTargets.forEach(el => el.classList.add("lg:hidden"))
+      if (this.hasUserInfoTarget) this.userInfoTarget.classList.add("lg:hidden")
+      if (this.hasContentTarget) this.contentTarget.style.marginLeft = "64px"
+    } else {
+      panel.style.width = ""
+      this.labelTargets.forEach(el => el.classList.remove("lg:hidden"))
+      if (this.hasUserInfoTarget) this.userInfoTarget.classList.remove("lg:hidden")
+      if (this.hasContentTarget) this.contentTarget.style.marginLeft = ""
+    }
   }
 }

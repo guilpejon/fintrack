@@ -7,3 +7,4 @@ pin "@hotwired/stimulus-loading", to: "stimulus-loading.js"
 pin_all_from "app/javascript/controllers", under: "controllers"
 
 pin "chartkick" # @5.0.1
+pin "flatpickr", to: "https://esm.sh/flatpickr@4.6.13"

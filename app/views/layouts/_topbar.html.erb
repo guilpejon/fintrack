@@ -1,19 +1,49 @@
 <header class="flex h-16 items-center justify-between px-4 md:px-6 border-b flex-shrink-0" style="background-color: #1A1D27; border-color: #2A2F45;">
-  <%# Mobile menu button %>
-  <button class="lg:hidden p-2 rounded-lg transition-colors hover:bg-white/5" style="color: #8892A4;" data-action="click->sidebar#toggle">
+  <%# Menu button: mobile=overlay, desktop=collapse sidebar %>
+  <button class="p-2 rounded-lg transition-colors hover:bg-white/5" style="color: #8892A4;" data-action="click->sidebar#toggle">
     <%= svg_icon "menu", css_class: "w-5 h-5" %>
   </button>
 
-  <%# Month selector %>
-  <div class="flex items-center gap-2">
-    <%= link_to request.path + "?month=#{(@current_date - 1.month).strftime('%Y-%m')}", class: "p-1.5 rounded-lg transition-colors hover:bg-white/5", style: "color: #8892A4;" do %>
-      <%= svg_icon "chevron-left", css_class: "w-4 h-4" %>
+  <%# Month selector with boundaries %>
+  <% today_month = Date.current.beginning_of_month %>
+  <% min_month = today_month - 24.months %>
+  <% max_month = today_month + 1.month %>
+  <% prev_date = @current_date - 1.month %>
+  <% next_date = @current_date + 1.month %>
+  <% at_min = @current_date <= min_month %>
+  <% at_max = @current_date >= max_month %>
+  <% on_today = @current_date == today_month %>
+
+  <div class="flex items-center gap-1">
+    <% if at_min %>
+      <span class="p-1.5 rounded-lg cursor-not-allowed opacity-25" style="color: #8892A4;">
+        <%= svg_icon "chevron-left", css_class: "w-4 h-4" %>
+      </span>
+    <% else %>
+      <%= link_to request.path + "?month=#{prev_date.strftime('%Y-%m')}", class: "p-1.5 rounded-lg transition-colors hover:bg-white/5", style: "color: #8892A4;" do %>
+        <%= svg_icon "chevron-left", css_class: "w-4 h-4" %>
+      <% end %>
     <% end %>
-    <span class="text-sm font-semibold min-w-32 text-center" style="color: #E2E8F0;">
-      <%= @current_date&.strftime("%B %Y") || Date.current.strftime("%B %Y") %>
-    </span>
-    <%= link_to request.path + "?month=#{(@current_date + 1.month).strftime('%Y-%m')}", class: "p-1.5 rounded-lg transition-colors hover:bg-white/5", style: "color: #8892A4;" do %>
-      <%= svg_icon "chevron-right", css_class: "w-4 h-4" %>
+
+    <div class="flex items-center gap-2 min-w-44 justify-center">
+      <span class="text-sm font-semibold" style="color: #E2E8F0;">
+        <%= @current_date&.strftime("%B %Y") || Date.current.strftime("%B %Y") %>
+      </span>
+      <% unless on_today %>
+        <%= link_to request.path + "?month=#{today_month.strftime('%Y-%m')}", class: "px-2 py-0.5 rounded text-xs font-medium transition-colors hover:opacity-80", style: "background-color: rgba(108,99,255,0.2); color: #6C63FF;" do %>
+          Back
+        <% end %>
+      <% end %>
+    </div>
+
+    <% if at_max %>
+      <span class="p-1.5 rounded-lg cursor-not-allowed opacity-25" style="color: #8892A4;">
+        <%= svg_icon "chevron-right", css_class: "w-4 h-4" %>
+      </span>
+    <% else %>
+      <%= link_to request.path + "?month=#{next_date.strftime('%Y-%m')}", class: "p-1.5 rounded-lg transition-colors hover:bg-white/5", style: "color: #8892A4;" do %>
+        <%= svg_icon "chevron-right", css_class: "w-4 h-4" %>
+      <% end %>
     <% end %>
   </div>
 

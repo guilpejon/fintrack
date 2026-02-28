@@ -24,15 +24,7 @@ class ExpensesController < ApplicationController
     @expense = current_user.expenses.build(expense_params)
 
     if @expense.save
-      respond_to do |format|
-        format.html { redirect_to expenses_path, notice: "Expense added." }
-        format.turbo_stream do
-          render turbo_stream: [
-            turbo_stream.prepend("expenses_list", partial: "expenses/expense", locals: { expense: @expense }),
-            turbo_stream.update("expenses_total", partial: "expenses/total", locals: { total: current_user.expenses.for_month(@current_date).sum(:amount) })
-          ]
-        end
-      end
+      redirect_to expenses_path, notice: "Expense added."
     else
       @categories = current_user.categories.order(:name)
       @credit_cards = current_user.credit_cards.order(:name)

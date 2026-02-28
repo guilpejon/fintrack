@@ -18,15 +18,7 @@ class IncomesController < ApplicationController
     @income = current_user.incomes.build(income_params)
 
     if @income.save
-      respond_to do |format|
-        format.html { redirect_to incomes_path, notice: "Income added." }
-        format.turbo_stream do
-          render turbo_stream: [
-            turbo_stream.prepend("incomes_list", partial: "incomes/income", locals: { income: @income }),
-            turbo_stream.update("incomes_total", partial: "incomes/total", locals: { total: current_user.incomes.for_month(@current_date).sum(:amount) })
-          ]
-        end
-      end
+      redirect_to incomes_path, notice: "Income added."
     else
       render :new, status: :unprocessable_entity
     end
