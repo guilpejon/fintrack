@@ -84,6 +84,6 @@ Rails.application.configure do
   # Enable DNS rebinding protection and other `Host` header attacks.
   # Set APP_HOST on your server to your Cloudflare tunnel domain (e.g. "yourapp.yourdomain.com").
   # Once set, only that hostname will be accepted.
-  config.hosts = [ ENV["APP_HOST"] ].compact if ENV["APP_HOST"].present?
+  config.hosts = ENV["APP_HOST"].split(",").map(&:strip) if ENV["APP_HOST"].present?
   config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 end

@@ -31,6 +31,8 @@ env:
     - RAILS_MASTER_KEY
     - ACOMPANHESUAGRANA_DATABASE_PASSWORD
   clear:
+    APP_HOST: acompanhesuagrana.com.br,www.acompanhesuagrana.com.br
+
     # Run the Solid Queue Supervisor inside the web server's Puma process.
     SOLID_QUEUE_IN_PUMA: true
 
