@@ -52,7 +52,7 @@ gem "chartkick"
 gem "groupdate"
 
 # Currency handling
-gem "money-rails", "~> 1.15"
+gem "money-rails", "~> 3.0"
 
 # Pagination
 gem "pagy", "~> 9"
