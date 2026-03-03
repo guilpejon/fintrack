@@ -1,9 +1,9 @@
-# Seeds — Acompanhe sua Grana
+# Seeds — Monitore sua Grana
 # Creates a demo user with realistic sample data for development
 
 puts "Creating demo user..."
 
-user = User.find_or_create_by!(email: "demo@acompanhesuagrana.com.br") do |u|
+user = User.find_or_create_by!(email: "demo@monitoresuagrana.com.br") do |u|
   u.password = "password"
   u.password_confirmation = "password"
   u.name = "Demo User"
@@ -126,4 +126,4 @@ puts "Creating sample investments..."
 end
 
 puts "\nSeeding complete!"
-puts "Login: demo@acompanhesuagrana.com.br / password123"
+puts "Login: demo@monitoresuagrana.com.br / password123"

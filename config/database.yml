@@ -22,13 +22,13 @@ default: &default
 
 development:
   <<: *default
-  database: acompanhesuagrana_development
+  database: monitoresuagrana_development
 
   # The specified database role being used to connect to PostgreSQL.
   # To create additional roles in PostgreSQL see `$ createuser --help`.
   # When left blank, PostgreSQL will use the default role. This is
   # the same name as the operating system user running Rails.
-  #username: acompanhesuagrana
+  #username: monitoresuagrana
 
   # The password associated with the PostgreSQL role (username).
   #password:
@@ -56,7 +56,7 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: acompanhesuagrana_test
+  database: monitoresuagrana_test
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -87,19 +87,19 @@ test:
 production:
   primary: &primary_production
     <<: *default
-    database: acompanhesuagrana_production
-    username: acompanhesuagrana
-    password: <%= ENV["ACOMPANHESUAGRANA_DATABASE_PASSWORD"] %>
+    database: monitoresuagrana_production
+    username: monitoresuagrana
+    password: <%= ENV["MONITORESUAGRANA_DATABASE_PASSWORD"] %>
     host: <%= ENV["DB_HOST"] %>
   cache:
     <<: *primary_production
-    database: acompanhesuagrana_production_cache
+    database: monitoresuagrana_production_cache
     migrations_paths: db/cache_migrate
   queue:
     <<: *primary_production
-    database: acompanhesuagrana_production_queue
+    database: monitoresuagrana_production_queue
     migrations_paths: db/queue_migrate
   cable:
     <<: *primary_production
-    database: acompanhesuagrana_production_cable
+    database: monitoresuagrana_production_cable
     migrations_paths: db/cable_migrate

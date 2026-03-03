@@ -1,6 +1,6 @@
 pt-BR:
   app:
-    name: "Acompanhe sua Grana"
+    name: "Monitore sua Grana"
     description: "Controle suas receitas, despesas e investimentos em um só lugar."
 
   activerecord:

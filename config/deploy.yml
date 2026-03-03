@@ -1,19 +1,19 @@
 # Name of your application. Used to uniquely configure containers.
-service: acompanhesuagrana
+service: monitoresuagrana
 
 # Name of the container image (use your-user/app-name on external registries).
-image: guilpejon/acompanhesuagrana
+image: guilpejon/monitoresuagrana
 
 # Deploy to these servers.
 servers:
   web:
-    - ssh.acompanhesuagrana.com.br
+    - ssh.monitoresuagrana.com.br
 
 # Kamal proxy configuration
 # Cloudflare tunnel handles SSL — no Let's Encrypt needed.
 proxy:
   ssl: false
-  host: acompanhesuagrana.com.br,www.acompanhesuagrana.com.br
+  host: monitoresuagrana.com.br,www.monitoresuagrana.com.br
   healthcheck:
     path: /up
     interval: 3
@@ -29,9 +29,9 @@ registry:
 env:
   secret:
     - RAILS_MASTER_KEY
-    - ACOMPANHESUAGRANA_DATABASE_PASSWORD
+    - MONITORESUAGRANA_DATABASE_PASSWORD
   clear:
-    APP_HOST: acompanhesuagrana.com.br,www.acompanhesuagrana.com.br
+    APP_HOST: monitoresuagrana.com.br,www.monitoresuagrana.com.br
 
     # Run the Solid Queue Supervisor inside the web server's Puma process.
     SOLID_QUEUE_IN_PUMA: true
@@ -52,7 +52,7 @@ aliases:
 
 # Use a persistent storage volume for Active Storage files.
 volumes:
-  - "acompanhesuagrana_storage:/rails/storage"
+  - "monitoresuagrana_storage:/rails/storage"
 
 asset_path: /rails/public/assets
 
@@ -62,7 +62,7 @@ builder:
   arch: arm64
 
   # Build directly on the Pi (native ARM64, much faster than QEMU emulation).
-  remote: ssh://guilpejon@ssh.acompanhesuagrana.com.br
+  remote: ssh://guilpejon@ssh.monitoresuagrana.com.br
 
 # SSH configuration for Raspberry Pi.
 ssh:
