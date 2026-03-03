@@ -115,13 +115,13 @@
     <% else %>
       <div class="min-h-full">
         <% if notice %>
-          <div class="fixed top-20 left-4 right-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:w-96 z-50 px-4 py-3 rounded-lg text-sm font-medium border flex items-center gap-4 shadow-lg" style="background-color: rgba(0,212,170,0.1); border-color: #00D4AA; color: #00D4AA;">
+          <div class="fixed top-20 left-4 right-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:w-96 z-50 px-4 py-3 rounded-lg text-sm font-medium border flex items-center justify-between gap-4 shadow-lg" style="background-color: rgba(0,212,170,0.1); border-color: #00D4AA; color: #00D4AA;">
             <span><%= notice %></span>
             <button type="button" onclick="this.closest('div').remove()" class="shrink-0 opacity-70 hover:opacity-100 transition-opacity cursor-pointer" aria-label="Dismiss">&times;</button>
           </div>
         <% end %>
         <% if alert %>
-          <div class="fixed top-20 left-4 right-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:w-96 z-50 px-4 py-3 rounded-lg text-sm font-medium border flex items-center gap-4 shadow-lg" style="background-color: rgba(255,107,107,0.1); border-color: #FF6B6B; color: #FF6B6B;">
+          <div class="fixed top-20 left-4 right-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:w-96 z-50 px-4 py-3 rounded-lg text-sm font-medium border flex items-center justify-between gap-4 shadow-lg" style="background-color: rgba(255,107,107,0.1); border-color: #FF6B6B; color: #FF6B6B;">
             <span><%= alert %></span>
             <button type="button" onclick="this.closest('div').remove()" class="shrink-0 opacity-70 hover:opacity-100 transition-opacity cursor-pointer" aria-label="Dismiss">&times;</button>
           </div>
