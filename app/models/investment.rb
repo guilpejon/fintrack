@@ -7,6 +7,7 @@ class Investment < ApplicationRecord
   validates :investment_type, inclusion: { in: TYPES }
   validates :quantity, numericality: { greater_than_or_equal_to: 0 }
   validates :average_price, numericality: { greater_than_or_equal_to: 0 }
+  validates :ticker, format: { with: /\A[A-Za-z0-9.\-]{1,20}\z/, message: :invalid }, allow_blank: true
 
   def total_invested
     quantity * average_price

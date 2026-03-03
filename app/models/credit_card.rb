@@ -12,7 +12,12 @@ class CreditCard < ApplicationRecord
     # Bill covers from last billing_day+1 to current billing_day
     period_start = reference_date.change(day: billing_day) - 1.month + 1.day
     period_end = reference_date.change(day: billing_day)
-    expenses.where(date: period_start..period_end).sum(:amount)
+
+    if expenses.loaded?
+      expenses.select { |e| e.date.between?(period_start, period_end) }.sum(&:amount)
+    else
+      expenses.where(date: period_start..period_end).sum(:amount)
+    end
   end
 
   def color_hex

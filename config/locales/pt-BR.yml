@@ -1,6 +1,7 @@
 pt-BR:
   app:
     name: "Acompanhe sua Grana"
+    description: "Controle suas receitas, despesas e investimentos em um só lugar."
 
   activerecord:
     attributes:
@@ -96,6 +97,7 @@ pt-BR:
       possessions: "Patrimônio"
       forecast: "Projeção"
       categories: "Categorias"
+      payees: "Beneficiários"
       settings: "Configurações"
       sign_out: "Sair"
     topbar:
@@ -250,14 +252,13 @@ pt-BR:
   bank_accounts:
     index:
       title: "Contas Bancárias"
-      refresh_cdi: "Atualizar CDI"
       add: "Adicionar Conta"
       cdi_rate_annual: "Taxa CDI (Anual)"
       cdi_pa: "% a.a."
       as_of: "em"
       updated: "atualizado"
       ago: "atrás"
-      cdi_not_cached: 'Taxa CDI não disponível — clique em "Atualizar CDI" para buscar a taxa atual do Banco Central do Brasil.'
+      cdi_not_cached: "Taxa CDI ainda não disponível — é atualizada automaticamente toda manhã."
       total_balance: "Saldo Total"
       est_monthly_interest: "Rendimento Mensal Est."
       est_yearly_interest: "Rendimento Anual Est."
@@ -292,7 +293,7 @@ pt-BR:
       as_of: "(em"
       updated: "atualizado"
       ago: "atrás)"
-      cdi_not_available: 'Taxa CDI não disponível — clique em "Atualizar CDI" na página de contas.'
+      cdi_not_available: "Taxa CDI ainda não disponível — é atualizada automaticamente toda manhã."
       color: "Cor"
       add: "Adicionar Conta"
       update: "Atualizar Conta"
@@ -568,13 +569,14 @@ pt-BR:
       created: "Conta bancária adicionada."
       updated: "Conta bancária atualizada."
       destroyed: "Conta bancária removida."
-      cdi_queued: "Atualização do CDI agendada."
     investments:
       created: "Investimento adicionado."
       updated: "Investimento atualizado."
       destroyed: "Investimento removido."
       price_queued_single: "Atualização de preço agendada para %{name}."
       price_queued_all: "Atualização de preços agendada para todos os investimentos."
+      price_already_fresh: "O preço de %{name} já está atualizado."
+      prices_already_fresh: "Todos os preços já estão atualizados."
     categories:
       created: "Categoria criada."
       updated: "Categoria atualizada."

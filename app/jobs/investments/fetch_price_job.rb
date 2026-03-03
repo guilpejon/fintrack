@@ -2,22 +2,20 @@ module Investments
   class FetchPriceJob < ApplicationJob
     queue_as :default
 
-    def perform(investment_id)
-      investment = Investment.find_by(id: investment_id)
-      return unless investment&.ticker.present?
-
-      price = case investment.investment_type
+    def perform(ticker, investment_type)
+      price = case investment_type
       when "stock"
-                fetch_stock_price(investment.ticker)
+                fetch_stock_price(ticker)
       when "crypto"
-                fetch_crypto_price(investment.ticker)
+                fetch_crypto_price(ticker)
       end
 
       if price && price > 0
-        investment.update!(current_price: price, last_price_update_at: Time.current)
+        Investment.where(ticker: ticker, investment_type: investment_type)
+                  .update_all(current_price: price, last_price_update_at: Time.current)
       end
     rescue StandardError => e
-      Rails.logger.error "FetchPriceJob error for investment #{investment_id}: #{e.message}"
+      Rails.logger.error "FetchPriceJob error for #{investment_type} #{ticker}: #{e.message}"
     end
 
     private

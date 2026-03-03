@@ -26,7 +26,7 @@ class InvestmentsController < ApplicationController
     @investment = current_user.investments.build(investment_params)
 
     if @investment.save
-      Investments::FetchPriceJob.perform_later(@investment.id) if @investment.ticker.present?
+      Investments::FetchPriceJob.perform_later(@investment.ticker, @investment.investment_type) if @investment.ticker.present?
       redirect_to investments_path, notice: t("controllers.investments.created")
     else
       render :new, status: :unprocessable_entity
@@ -48,16 +48,29 @@ class InvestmentsController < ApplicationController
     redirect_to investments_path, notice: t("controllers.investments.destroyed")
   end
 
+  PRICE_FRESHNESS_WINDOW = 1.hour
+
   def refresh_price
-    Investments::FetchPriceJob.perform_later(@investment.id)
-    redirect_to investments_path, notice: t("controllers.investments.price_queued_single", name: @investment.name)
+    if @investment.last_price_update_at&.> PRICE_FRESHNESS_WINDOW.ago
+      redirect_to investments_path, notice: t("controllers.investments.price_already_fresh", name: @investment.name)
+    else
+      Investments::FetchPriceJob.perform_later(@investment.ticker, @investment.investment_type)
+      redirect_to investments_path, notice: t("controllers.investments.price_queued_single", name: @investment.name)
+    end
   end
 
   def refresh_all_prices
-    current_user.investments.where.not(ticker: [ nil, "" ]).each do |inv|
-      Investments::FetchPriceJob.perform_later(inv.id)
+    stale = current_user.investments
+                        .where.not(ticker: [ nil, "" ])
+                        .where("last_price_update_at IS NULL OR last_price_update_at < ?", PRICE_FRESHNESS_WINDOW.ago)
+                        .pluck(:ticker, :investment_type).uniq
+
+    if stale.empty?
+      redirect_to investments_path, notice: t("controllers.investments.prices_already_fresh")
+    else
+      stale.each { |ticker, type| Investments::FetchPriceJob.perform_later(ticker, type) }
+      redirect_to investments_path, notice: t("controllers.investments.price_queued_all")
     end
-    redirect_to investments_path, notice: t("controllers.investments.price_queued_all")
   end
 
   private

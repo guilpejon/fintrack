@@ -30,6 +30,13 @@ class Rack::Attack
     end
   end
 
+  # Throttle investment price refresh per user: 10 per hour
+  throttle("refresh_prices/user", limit: 10, period: 1.hour) do |req|
+    if req.post? && req.path.match?(%r{\A/investments(/\d+/refresh_price|/refresh_all_prices)\z})
+      req.env["warden"]&.user&.id
+    end
+  end
+
   # Return 429 with a plain message when throttled
   self.throttled_responder = lambda do |_env|
     [

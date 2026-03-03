@@ -55,11 +55,6 @@ class BankAccountsController < ApplicationController
     redirect_to bank_accounts_path, notice: t("controllers.bank_accounts.destroyed")
   end
 
-  def refresh_cdi_rate
-    BankAccounts::FetchCdiRateJob.perform_later
-    redirect_to bank_accounts_path, notice: t("controllers.bank_accounts.cdi_queued")
-  end
-
   private
 
   def set_bank_account

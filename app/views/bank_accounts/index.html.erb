@@ -3,10 +3,6 @@
   <div class="flex items-center justify-between">
     <h1 class="text-xl font-bold" style="color: #E2E8F0;"><%= t("bank_accounts.index.title") %></h1>
     <div class="flex items-center gap-2">
-      <%= button_to refresh_cdi_rate_bank_accounts_path, method: :post, class: "flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors hover:opacity-90", style: "background-color: #2A2F45; color: #8892A4; border: none; cursor: pointer;" do %>
-        <%= svg_icon "refresh-cw", css_class: "w-3.5 h-3.5" %>
-        <%= t("bank_accounts.index.refresh_cdi") %>
-      <% end %>
       <%= link_to new_bank_account_path, class: "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-colors hover:opacity-90", style: "background-color: #6C63FF; color: white;" do %>
         <%= svg_icon "plus", css_class: "w-4 h-4", stroke: "white" %>
         <%= t("bank_accounts.index.add") %>

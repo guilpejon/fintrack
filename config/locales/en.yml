@@ -1,6 +1,7 @@
 en:
   app:
     name: "Acompanhe sua Grana"
+    description: "Track your income, expenses, and investments all in one place."
 
   date:
     month_names:
@@ -55,6 +56,7 @@ en:
       possessions: "Possessions"
       forecast: "Forecast"
       categories: "Categories"
+      payees: "Payees"
       settings: "Settings"
       sign_out: "Sign out"
     topbar:
@@ -209,14 +211,13 @@ en:
   bank_accounts:
     index:
       title: "Bank Accounts"
-      refresh_cdi: "Refresh CDI"
       add: "Add Account"
       cdi_rate_annual: "CDI Rate (Annual)"
       cdi_pa: "% p.a."
       as_of: "as of"
       updated: "updated"
       ago: "ago"
-      cdi_not_cached: 'CDI rate not cached — click "Refresh CDI" to fetch the current rate from Brazil''s Central Bank.'
+      cdi_not_cached: "CDI rate not yet available — it is fetched automatically every morning."
       total_balance: "Total Balance"
       est_monthly_interest: "Est. Monthly Interest"
       est_yearly_interest: "Est. Yearly Interest"
@@ -251,7 +252,7 @@ en:
       as_of: "(as of"
       updated: "updated"
       ago: "ago)"
-      cdi_not_available: 'CDI rate not available — click "Refresh CDI" on the accounts page.'
+      cdi_not_available: "CDI rate not yet available — it is fetched automatically every morning."
       color: "Color"
       add: "Add Account"
       update: "Update Account"
@@ -527,13 +528,14 @@ en:
       created: "Bank account added."
       updated: "Bank account updated."
       destroyed: "Bank account removed."
-      cdi_queued: "CDI rate refresh queued."
     investments:
       created: "Investment added."
       updated: "Investment updated."
       destroyed: "Investment removed."
       price_queued_single: "Price refresh queued for %{name}."
       price_queued_all: "Price refresh queued for all investments."
+      price_already_fresh: "Price for %{name} is already up to date."
+      prices_already_fresh: "All prices are already up to date."
     categories:
       created: "Category created."
       updated: "Category updated."

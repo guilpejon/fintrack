@@ -24,6 +24,7 @@
     <%= render "layouts/nav_item", icon: "layers", label: t("layouts.sidebar.possessions"), path: possessions_path, active: controller_name == "possessions" %>
     <%= render "layouts/nav_item", icon: "bar-chart-2", label: t("layouts.sidebar.forecast"), path: forecast_path(month: month_param), active: controller_name == "forecast" %>
     <%= render "layouts/nav_item", icon: "tag", label: t("layouts.sidebar.categories"), path: categories_path(month: month_param), active: controller_name == "categories" %>
+    <%= render "layouts/nav_item", icon: "user", label: t("layouts.sidebar.payees"), path: payees_path, active: controller_name == "payees" %>
     <%= render "layouts/nav_item", icon: "settings", label: t("layouts.sidebar.settings"), path: edit_user_settings_path, active: controller_name == "settings" %>
   </nav>
 

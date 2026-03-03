@@ -8,7 +8,7 @@ class DashboardController < ApplicationController
     @net_balance = @total_income - @total_expenses
 
     # Credit card bills this month
-    @credit_cards = current_user.credit_cards
+    @credit_cards = current_user.credit_cards.includes(:expenses)
     @total_card_bills = @credit_cards.sum { |card| card.current_bill(@current_date) }
 
     # Spending by category for donut chart

@@ -14,6 +14,11 @@ export default class extends Controller {
     clearTimeout(this._debounceTimer)
   }
 
+  focusIn() {
+    clearTimeout(this._debounceTimer)
+    this._fetchResults()
+  }
+
   search() {
     clearTimeout(this._debounceTimer)
     this._debounceTimer = setTimeout(() => this._fetchResults(), 300)
@@ -21,11 +26,6 @@ export default class extends Controller {
 
   _fetchResults() {
     const term = this.payeeNameTarget.value.trim()
-
-    if (term.length === 0) {
-      this._hideDropdown()
-      return
-    }
 
     fetch(`/payees.json?q=${encodeURIComponent(term)}`, {
       headers: { Accept: "application/json" }
@@ -37,6 +37,11 @@ export default class extends Controller {
   _renderDropdown(payees, term) {
     const dropdown = this.dropdownTarget
     dropdown.innerHTML = ""
+
+    if (payees.length === 0 && term.length === 0) {
+      this._hideDropdown()
+      return
+    }
 
     payees.forEach(payee => {
       const item = document.createElement("div")
@@ -50,15 +55,17 @@ export default class extends Controller {
       dropdown.appendChild(item)
     })
 
-    const createItem = document.createElement("div")
-    createItem.className = "px-3 py-2 cursor-pointer text-sm hover:bg-white/10 transition-colors border-t"
-    createItem.style.cssText = "color: #6C63FF; border-color: #2A2F45;"
-    createItem.textContent = `+ Create "${term}"`
-    createItem.addEventListener("mousedown", e => {
-      e.preventDefault()
-      this._selectNew(term)
-    })
-    dropdown.appendChild(createItem)
+    if (term.length > 0) {
+      const createItem = document.createElement("div")
+      createItem.className = "px-3 py-2 cursor-pointer text-sm hover:bg-white/10 transition-colors border-t"
+      createItem.style.cssText = "color: #6C63FF; border-color: #2A2F45;"
+      createItem.textContent = `+ Create "${term}"`
+      createItem.addEventListener("mousedown", e => {
+        e.preventDefault()
+        this._selectNew(term)
+      })
+      dropdown.appendChild(createItem)
+    }
 
     dropdown.style.display = "block"
   }

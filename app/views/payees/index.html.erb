@@ -12,25 +12,58 @@
     <% if @payees.any? %>
       <div class="divide-y" style="border-color: #2A2F45;">
         <% @payees.each do |payee| %>
-          <div class="flex items-center justify-between gap-3 px-4 py-3 hover:bg-white/[0.02] transition-colors">
-            <p class="text-sm font-medium" style="color: #E2E8F0;"><%= payee.name %></p>
-            <div class="flex items-center gap-1">
-              <%= link_to edit_payee_path(payee), class: "p-1.5 rounded-lg hover:bg-white/5 transition-colors", style: "color: #8892A4;" do %>
-                <%= svg_icon "edit", css_class: "w-3.5 h-3.5" %>
-              <% end %>
-              <%= button_to payee_path(payee), method: :delete,
-                  form: { data: { turbo_confirm: t("payees.index.delete_confirm") } },
-                  class: "p-1.5 rounded-lg hover:bg-white/5 transition-colors",
-                  style: "color: #8892A4; background: none; border: none; cursor: pointer;" do %>
-                <%= svg_icon "trash-2", css_class: "w-3.5 h-3.5" %>
-              <% end %>
+          <div class="flex items-center gap-3 px-4 py-3 hover:bg-white/[0.02] transition-colors"
+               data-controller="payee-inline-edit"
+               data-payee-inline-edit-url-value="<%= payee_path(payee) %>">
+
+            <%# View state %>
+            <div class="flex-1 flex items-center justify-between gap-3" data-payee-inline-edit-target="viewState">
+              <p class="text-sm font-medium" style="color: #E2E8F0;" data-payee-inline-edit-target="name"><%= payee.name %></p>
+              <div class="flex items-center gap-1">
+                <button type="button"
+                        class="p-1.5 rounded-lg hover:bg-white/5 transition-colors"
+                        style="color: #8892A4;"
+                        data-action="click->payee-inline-edit#edit">
+                  <%= svg_icon "edit", css_class: "w-3.5 h-3.5" %>
+                </button>
+                <%= button_to payee_path(payee), method: :delete,
+                    form: { data: { turbo_confirm: t("payees.index.delete_confirm") } },
+                    class: "p-1.5 rounded-lg hover:bg-white/5 transition-colors",
+                    style: "color: #8892A4; background: none; border: none; cursor: pointer;" do %>
+                  <%= svg_icon "trash-2", css_class: "w-3.5 h-3.5" %>
+                <% end %>
+              </div>
             </div>
+
+            <%# Edit state (hidden) %>
+            <div class="flex-1 items-center gap-2" style="display: none;" data-payee-inline-edit-target="editState">
+              <input type="text"
+                     class="flex-1 px-3 py-1.5 rounded-lg border text-sm outline-none transition-all"
+                     style="background-color: #0F1117; border-color: #2A2F45; color: #E2E8F0; width: 100%;"
+                     data-payee-inline-edit-target="input"
+                     data-action="keydown.enter->payee-inline-edit#save keydown.escape->payee-inline-edit#cancel" />
+              <div class="flex items-center gap-1 mt-1.5">
+                <button type="button"
+                        class="p-1.5 rounded-lg hover:bg-white/5 transition-colors"
+                        style="color: #00D4AA;"
+                        data-action="click->payee-inline-edit#save">
+                  <%= svg_icon "check", css_class: "w-3.5 h-3.5" %>
+                </button>
+                <button type="button"
+                        class="p-1.5 rounded-lg hover:bg-white/5 transition-colors"
+                        style="color: #8892A4;"
+                        data-action="click->payee-inline-edit#cancel">
+                  <%= svg_icon "x", css_class: "w-3.5 h-3.5" %>
+                </button>
+              </div>
+            </div>
+
           </div>
         <% end %>
       </div>
     <% else %>
       <div class="flex flex-col items-center justify-center py-16 gap-3">
-        <%= svg_icon "users", css_class: "w-12 h-12 opacity-20", stroke: "#8892A4" %>
+        <%= svg_icon "user", css_class: "w-12 h-12 opacity-20", stroke: "#8892A4" %>
         <p class="text-sm font-medium" style="color: #8892A4;"><%= t("payees.index.no_payees") %></p>
       </div>
     <% end %>

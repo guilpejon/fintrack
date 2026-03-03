@@ -37,9 +37,15 @@ class PayeesController < ApplicationController
 
   def update
     if @payee.update(payee_params)
-      redirect_to payees_path, notice: t("controllers.payees.updated")
+      respond_to do |format|
+        format.html { redirect_to payees_path, notice: t("controllers.payees.updated") }
+        format.json { render json: { name: @payee.name } }
+      end
     else
-      render :edit, status: :unprocessable_entity
+      respond_to do |format|
+        format.html { render :edit, status: :unprocessable_entity }
+        format.json { render json: { errors: @payee.errors.full_messages }, status: :unprocessable_entity }
+      end
     end
   end
 

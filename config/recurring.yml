@@ -17,3 +17,7 @@ production:
     class: BankAccounts::FetchCdiRateJob
     queue: default
     schedule: at 8am every day
+  refresh_investment_prices:
+    class: Investments::RefreshAllPricesJob
+    queue: default
+    schedule: at 8:05am every day
