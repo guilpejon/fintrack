@@ -1,14 +1,14 @@
 module BrazilianHolidays
   # Fixed national holidays: [month, day]
   FIXED = [
-    [1,  1],  # Confraternização Universal
-    [4,  21], # Tiradentes
-    [5,  1],  # Dia do Trabalho
-    [9,  7],  # Independência do Brasil
-    [10, 12], # Nossa Senhora Aparecida
-    [11, 2],  # Finados
-    [11, 15], # Proclamação da República
-    [12, 25]  # Natal
+    [ 1,  1 ],  # Confraternização Universal
+    [ 4,  21 ], # Tiradentes
+    [ 5,  1 ],  # Dia do Trabalho
+    [ 9,  7 ],  # Independência do Brasil
+    [ 10, 12 ], # Nossa Senhora Aparecida
+    [ 11, 2 ],  # Finados
+    [ 11, 15 ], # Proclamação da República
+    [ 12, 25 ]  # Natal
   ].freeze
 
   def self.holiday?(date)
