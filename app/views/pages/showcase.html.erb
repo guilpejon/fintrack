@@ -201,6 +201,9 @@
         <%= link_to "EN", set_locale_path(locale: "en"),
               class: "px-3 py-1.5 rounded-md text-xs font-semibold transition-opacity",
               style: I18n.locale.to_s == "en" ? "background-color: #2A2F45; color: #E2E8F0;" : "color: #8892A4;" %>
+        <%= link_to "ES", set_locale_path(locale: "es"),
+              class: "px-3 py-1.5 rounded-md text-xs font-semibold transition-opacity",
+              style: I18n.locale.to_s == "es" ? "background-color: #2A2F45; color: #E2E8F0;" : "color: #8892A4;" %>
       </div>
     </div>
   </footer>

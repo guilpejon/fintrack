@@ -62,6 +62,12 @@ class ApplicationController < ActionController::Base
     return I18n.default_locale.to_s if accept_language.blank?
 
     lang = accept_language.split(",").first&.split(";")&.first&.strip&.downcase || ""
-    lang.start_with?("pt") ? "pt-BR" : "en"
+    if lang.start_with?("pt")
+      "pt-BR"
+    elsif lang.start_with?("es")
+      "es"
+    else
+      "en"
+    end
   end
 end

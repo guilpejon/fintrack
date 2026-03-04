@@ -1,0 +1,610 @@
+es:
+  app:
+    name: "Monitore sua Grana"
+    description: "Controla tus ingresos, gastos e inversiones en un solo lugar."
+
+  activerecord:
+    attributes:
+      expense:
+        description: "Descripción"
+        amount: "Importe"
+        date: "Fecha"
+        category: "Categoría"
+        category_id: "Categoría"
+        payment_method: "Método de pago"
+        expense_type: "Tipo"
+        recurrence_day: "Día de recurrencia"
+        total_installments: "Cuotas"
+        installment_number: "Número de cuota"
+        payment_status: "Estado del pago"
+      income:
+        description: "Descripción"
+        amount: "Importe"
+        date: "Fecha"
+        income_type: "Tipo"
+      credit_card:
+        name: "Nombre"
+        credit_limit: "Límite de crédito"
+        billing_day: "Día de cierre"
+        due_day: "Día de vencimiento"
+      bank_account:
+        name: "Nombre"
+        balance: "Saldo"
+        account_type: "Tipo de cuenta"
+      investment:
+        name: "Nombre"
+        investment_type: "Tipo"
+        quantity: "Cantidad"
+      category:
+        name: "Nombre"
+        color: "Color"
+      payee:
+        name: "Nombre"
+      possession:
+        name: "Nombre"
+        possession_type: "Tipo"
+
+  date:
+    month_names:
+      - ~
+      - Enero
+      - Febrero
+      - Marzo
+      - Abril
+      - Mayo
+      - Junio
+      - Julio
+      - Agosto
+      - Septiembre
+      - Octubre
+      - Noviembre
+      - Diciembre
+    abbr_month_names:
+      - ~
+      - Ene
+      - Feb
+      - Mar
+      - Abr
+      - May
+      - Jun
+      - Jul
+      - Ago
+      - Sep
+      - Oct
+      - Nov
+      - Dic
+
+  category_names:
+    Housing: "Vivienda"
+    Food: "Alimentación"
+    Transport: "Transporte"
+    Health: "Salud"
+    Entertainment: "Entretenimiento"
+    Shopping: "Compras"
+    Education: "Educación"
+    Utilities: "Servicios"
+    Travel: "Viajes"
+    Other: "Otros"
+
+  layouts:
+    sidebar:
+      dashboard: "Panel"
+      expenses: "Gastos"
+      income: "Ingresos"
+      credit_cards: "Tarjetas de Crédito"
+      bank_accounts: "Cuentas Bancarias"
+      investments: "Inversiones"
+      possessions: "Patrimonio"
+      forecast: "Proyección"
+      categories: "Categorías"
+      payees: "Beneficiarios"
+      settings: "Configuración"
+      sign_out: "Cerrar sesión"
+      section_overview: "Resumen"
+      section_finances: "Finanzas"
+      section_manage: "Gestionar"
+    topbar:
+      back: "Volver"
+      add_expense: "Agregar Gasto"
+    mobile_nav:
+      home: "Inicio"
+      expenses: "Gastos"
+      income: "Ingresos"
+      invest: "Invertir"
+      forecast: "Proyección"
+
+  dashboard:
+    index:
+      title: "Panel"
+    total_income: "Ingresos Totales"
+    expenses: "Gastos"
+    net_balance: "Saldo Neto"
+    income_minus_expenses: "Ingresos - Gastos"
+    card_bills: "Facturas"
+    bank_balance: "Saldo Bancario"
+    view_accounts: "Ver cuentas"
+    possessions: "Patrimonio"
+    view_possessions: "Ver patrimonio"
+    spending_by_category: "Gastos por Categoría"
+    cash_flow: "Flujo de Caja — Últimos 6 Meses"
+    income_label: "Ingresos"
+    expenses_label: "Gastos"
+    spending_by_payee: "Gastos por Beneficiario"
+    recent_transactions: "Transacciones Recientes"
+    view_all: "Ver todas"
+    no_expenses_month: "Sin gastos registrados este mes"
+    no_data_6_months: "Sin datos de los últimos 6 meses"
+    no_payees_month: "Ningún beneficiario asignado a gastos este mes"
+    no_recent_transactions: "Sin transacciones recientes"
+    card_count:
+      one: "1 tarjeta"
+      other: "%{count} tarjetas"
+
+  expenses:
+    index:
+      title: "Gastos"
+      total: "Total:"
+      add_expense: "Agregar Gasto"
+      no_expenses: "Sin gastos este mes"
+      add_first: "Agrega tu primer gasto"
+    new:
+      title: "Nuevo Gasto"
+      quick_title: "Agregar Gasto Rápido"
+    edit:
+      title: "Editar Gasto"
+    form:
+      amount: "Importe *"
+      payment_method: "Método de Pago"
+      cash: "Efectivo"
+      pix: "PIX"
+      boleto: "Boleto"
+      credit_card: "Tarjeta"
+      category: "Categoría *"
+      payee: "Beneficiario"
+      payee_placeholder: "Buscar o crear beneficiario..."
+      description: "Descripción"
+      description_placeholder: "¿En qué gastaste?"
+      date: "Fecha"
+      type: "Tipo"
+      variable: "Variable"
+      fixed: "Fijo"
+      select_card: "— Seleccionar Tarjeta —"
+      installments: "Cuotas"
+      per_installment: "Por cuota:"
+      installment_label: "Cuota"
+      installment_note: "— solo esta cuota será actualizada"
+      recurring: "Gasto recurrente"
+      add: "Agregar Gasto"
+      update: "Actualizar Gasto"
+      cancel: "Cancelar"
+    expense:
+      delete_confirm: "¿Eliminar este gasto?"
+    payment_statuses:
+      pending: "No programado"
+      scheduled: "Programado"
+      paid: "Pagado"
+      click_to_advance: "Clic para avanzar el estado"
+
+  incomes:
+    index:
+      title: "Ingresos"
+      total: "Total:"
+      add: "Agregar Ingreso"
+      no_income: "Sin ingresos registrados este mes"
+      add_first: "Agregar ingreso"
+    new:
+      title: "Nuevo Ingreso"
+    edit:
+      title: "Editar Ingreso"
+    form:
+      description: "Descripción *"
+      description_placeholder: "ej. Salario Mensual"
+      amount: "Importe *"
+      date: "Fecha *"
+      type: "Tipo"
+      salary: "Salario"
+      freelance: "Freelance"
+      dividend: "Dividendo"
+      other: "Otros"
+      recurring: "Ingreso recurrente"
+      add: "Agregar Ingreso"
+      update: "Actualizar Ingreso"
+      cancel: "Cancelar"
+    income:
+      delete_confirm: "¿Eliminar este ingreso?"
+
+  credit_cards:
+    index:
+      title: "Tarjetas de Crédito"
+      add: "Agregar Tarjeta"
+      current_bill: "Factura Actual"
+      limit: "Límite"
+      billing_due: "Cierre / Vencimiento"
+      day: "Día"
+      usage: "Uso"
+      edit: "Editar"
+      delete_confirm: "¿Eliminar esta tarjeta?"
+      no_cards: "Aún no hay tarjetas de crédito"
+      add_first: "Agrega tu primera tarjeta"
+    new:
+      title: "Agregar Tarjeta de Crédito"
+    edit:
+      title: "Editar Tarjeta"
+    form:
+      card_name: "Nombre de la Tarjeta *"
+      card_name_placeholder: "ej. Visa Platinum"
+      brand: "Marca"
+      select_brand: "Seleccionar marca"
+      last_four: "Últimos 4 dígitos"
+      credit_limit: "Límite de Crédito"
+      billing_day: "Día de Cierre"
+      due_day: "Día de Vencimiento"
+      color: "Color de la Tarjeta"
+      color_hint: "Elige un color para tu tarjeta"
+      add: "Agregar Tarjeta"
+      update: "Actualizar Tarjeta"
+      cancel: "Cancelar"
+    brands:
+      visa: "Visa"
+      mastercard: "Mastercard"
+      amex: "Amex"
+      elo: "Elo"
+      hipercard: "Hipercard"
+      other: "Otros"
+
+  bank_accounts:
+    index:
+      title: "Cuentas Bancarias"
+      add: "Agregar Cuenta"
+      cdi_rate_annual: "Tasa CDI (Anual)"
+      cdi_pa: "% p.a."
+      as_of: "al"
+      updated: "actualizado"
+      ago: "hace"
+      cdi_not_cached: "Tasa CDI aún no disponible — se actualiza automáticamente cada mañana."
+      total_balance: "Saldo Total"
+      est_monthly_interest: "Interés Mensual Est."
+      est_yearly_interest: "Interés Anual Est."
+      name: "Nombre"
+      bank: "Banco"
+      balance: "Saldo"
+      interest_rate: "Tasa de Interés"
+      actions: "Acciones"
+      no_accounts: "Aún no hay cuentas bancarias"
+      add_first: "Agrega tu primera cuenta"
+    new:
+      title: "Agregar Cuenta Bancaria"
+    edit:
+      title: "Editar Cuenta Bancaria"
+    form:
+      name: "Nombre *"
+      name_placeholder: "ej. Cuenta Corriente Principal"
+      bank_name: "Nombre del Banco"
+      bank_name_placeholder: "ej. Santander"
+      account_type: "Tipo de Cuenta *"
+      checking: "Corriente"
+      savings: "Ahorro"
+      other: "Otros"
+      balance: "Saldo"
+      rate_type: "Tipo de Tasa"
+      fixed_rate: "Tasa Fija (% p.a.)"
+      cdi_percent: "% del CDI"
+      interest_rate: "Tasa de Interés (% p.a.)"
+      cdi_multiplier: "Multiplicador CDI (%)"
+      current_cdi: "CDI actual:"
+      pa: "% p.a."
+      as_of: "(al"
+      updated: "actualizado"
+      ago: "hace)"
+      cdi_not_available: "Tasa CDI aún no disponible — se actualiza automáticamente cada mañana."
+      color: "Color"
+      add: "Agregar Cuenta"
+      update: "Actualizar Cuenta"
+      cancel: "Cancelar"
+
+  investments:
+    index:
+      title: "Inversiones"
+      refresh_prices: "Actualizar Precios"
+      add: "Agregar Inversión"
+      total_invested: "Total Invertido"
+      current_value: "Valor Actual"
+      pl: "G&P"
+      return: "Rentabilidad"
+      stocks: "Acciones"
+      crypto: "Crypto"
+      funds: "Fondos"
+      name_ticker: "Nombre / Ticker"
+      qty: "Cant."
+      avg_price: "Precio Promedio"
+      curr_price: "Precio Actual"
+      total_value: "Valor Total"
+      no_investments: "Aún no hay inversiones"
+      add_first: "Agrega tu primera inversión"
+    new:
+      title: "Agregar Inversión"
+      note: "Los precios de acciones se actualizan automáticamente via brapi.dev (acciones brasileñas). Precios de crypto via CoinGecko. Usa el campo ticker para habilitar actualizaciones automáticas."
+    edit:
+      title: "Editar Inversión"
+    form:
+      name: "Nombre *"
+      name_placeholder: "ej. Petrobras"
+      ticker: "Ticker / ID"
+      ticker_placeholder: "PETR4 o bitcoin"
+      type: "Tipo *"
+      stock: "Acción / FII"
+      crypto: "Crypto"
+      fund: "Fondo"
+      quantity: "Cantidad"
+      avg_price: "Precio Promedio"
+      current_price: "Precio Actual — actualizado automáticamente via API"
+      add: "Agregar Inversión"
+      update: "Actualizar Inversión"
+      cancel: "Cancelar"
+
+  categories:
+    index:
+      title: "Categorías"
+      new: "Nueva Categoría"
+      delete_confirm: "¿Eliminar esta categoría? Los gastos perderán su categoría."
+      no_categories: "Aún no hay categorías"
+    new:
+      title: "Nueva Categoría"
+    edit:
+      title: "Editar Categoría"
+    form:
+      name: "Nombre *"
+      name_placeholder: "ej. Suscripciones"
+      color: "Color *"
+      icon: "Ícono"
+      add: "Crear Categoría"
+      update: "Actualizar Categoría"
+      cancel: "Cancelar"
+
+  payees:
+    index:
+      title: "Beneficiarios"
+      new: "Nuevo Beneficiario"
+      delete_confirm: "¿Eliminar este beneficiario?"
+      no_payees: "Aún no hay beneficiarios"
+    new:
+      title: "Nuevo Beneficiario"
+    edit:
+      title: "Editar Beneficiario"
+    form:
+      name: "Nombre *"
+      name_placeholder: "ej. Amazon, Netflix, Propietario"
+      add: "Crear Beneficiario"
+      update: "Actualizar Beneficiario"
+      cancel: "Cancelar"
+
+  possessions:
+    index:
+      title: "Patrimonio"
+      add: "Agregar Bien"
+      total_items: "Total de Ítems"
+      total_purchase_value: "Valor Total de Compra"
+      total_current_value: "Valor Actual Total"
+      net_gain_loss: "Ganancia / Pérdida Neta"
+      name: "Nombre"
+      purchase_price: "Precio de Compra"
+      current_value: "Valor Actual"
+      gain_loss: "Ganancia / Pérdida"
+      actions: "Acciones"
+      delete_confirm: "¿Eliminar este bien?"
+      no_possessions: "Aún no hay bienes"
+      add_first: "Agrega tu primer bien"
+    new:
+      title: "Agregar Bien"
+    edit:
+      title: "Editar Bien"
+    form:
+      name: "Nombre *"
+      name_placeholder: "ej. Honda Civic"
+      type: "Tipo *"
+      vehicle: "Vehículo"
+      electronics: "Electrónica"
+      real_estate: "Inmueble"
+      furniture: "Muebles"
+      jewelry: "Joyería"
+      other: "Otros"
+      color: "Color"
+      purchase_price: "Precio de Compra"
+      current_value: "Valor Actual"
+      purchase_date: "Fecha de Compra"
+      currency: "Moneda"
+      brl: "BRL (R$)"
+      usd: "USD ($)"
+      eur: "EUR (€)"
+      notes: "Notas"
+      notes_placeholder: "Notas opcionales sobre este ítem..."
+      add: "Agregar Bien"
+      update: "Actualizar Bien"
+      cancel: "Cancelar"
+
+  forecast:
+    index:
+      title: "Proyección"
+      projection_for: "Proyección de gastos para"
+      projected_income: "Ingresos Proyectados"
+      recurring_source: "fuente recurrente"
+      recurring_sources: "fuentes"
+      projected_expenses: "Gastos Proyectados"
+      recurring: "recurrente"
+      installment: "cuota"
+      projected_balance: "Saldo Proyectado"
+      vs: "vs"
+      in: "en"
+      projected_by_category: "Gastos Proyectados por Categoría"
+      no_recurring: "No se encontraron gastos recurrentes"
+      recurring_expenses: "Gastos Recurrentes"
+      day: "Día"
+      no_recurring_yet: "Aún no hay gastos recurrentes"
+      recurring_hint: 'Marca los gastos como "recurrente" al agregarlos para ver tu proyección aquí.'
+      installment_expenses: "Gastos en Cuotas"
+      credit_card_bills: "Facturas de Tarjeta"
+      actuals: "Realizados —"
+
+  settings:
+    edit:
+      title: "Configuración"
+      subtitle: "Gestiona tu cuenta y preferencias"
+      profile_section: "Perfil"
+      name: "Nombre"
+      name_placeholder: "Tu nombre"
+      email: "Correo electrónico"
+      email_placeholder: "tu@correo.com"
+      currency: "Moneda"
+      language: "Idioma"
+      save_changes: "Guardar Cambios"
+      password_section: "Cambiar Contraseña"
+      set_password_section: "Establecer una Contraseña"
+      current_password: "Contraseña Actual"
+      new_password: "Nueva Contraseña"
+      password_hint: "Mín. 6 caracteres"
+      confirm_password: "Confirmar Nueva Contraseña"
+      update_password: "Actualizar Contraseña"
+      danger_section: "Zona de Peligro"
+      sign_out_all: "Cerrar sesión en todos los dispositivos"
+      sign_out_description: "Cierra todas las sesiones activas"
+      sign_out: "Cerrar Sesión"
+      preferences_section: "Preferencias"
+      language_english: "English"
+      language_pt_br: "Português (Brasil)"
+      language_es: "Español"
+
+  shared:
+    empty_state:
+      default: "Nada aquí todavía"
+
+  devise:
+    sessions:
+      new:
+        title: "Iniciar Sesión"
+        subtitle: "Gestor de Finanzas Personales"
+        sign_in_heading: "Inicia sesión en tu cuenta"
+        sign_in: "Iniciar sesión"
+        no_account: "¿No tienes cuenta?"
+        sign_up: "Registrarse"
+        forgot_password: "¿Olvidaste tu contraseña?"
+        remember_me: "Recordarme"
+        or_continue_with: "o continúa con"
+        sign_in_with_google: "Iniciar sesión con Google"
+    registrations:
+      new:
+        title: "Registro"
+        create_account: "Crea tu cuenta"
+        sign_up: "Registrarse"
+        name_placeholder: "Tu nombre"
+        email_placeholder: "tu@ejemplo.com"
+        password_placeholder: "••••••••"
+        password_label: "Contraseña"
+        password_hint: "+ caracteres"
+        confirm_password: "Confirmar Contraseña"
+        create_btn: "Crear cuenta"
+        have_account: "¿Ya tienes cuenta?"
+        sign_in: "Iniciar sesión"
+        or_sign_up_with: "o regístrate con"
+        sign_up_with_google: "Registrarse con Google"
+    passwords:
+      new:
+        title: "¿Olvidaste tu contraseña?"
+        send_instructions: "Enviarme instrucciones para restablecer la contraseña"
+      edit:
+        title: "Cambia tu contraseña"
+        new_password: "Nueva contraseña"
+        password_hint: "caracteres mínimo"
+        confirm_password: "Confirmar nueva contraseña"
+        change_password: "Cambiar mi contraseña"
+
+  pages:
+    showcase:
+      nav_sign_in: "Iniciar sesión"
+      nav_sign_up: "Crear cuenta"
+      hero_title: "Tus finanzas,"
+      hero_title_highlight: "organizadas"
+      hero_description: "Controla gastos, ingresos, tarjetas, inversiones y patrimonio en un solo lugar. Gratuito y sin complicaciones."
+      hero_cta_primary: "Crear cuenta gratis"
+      hero_cta_secondary: "Ya tengo cuenta"
+      features_title: "Todo lo que necesitas"
+      features_subtitle: "Funcionalidades completas para tener control total de tu vida financiera"
+      dashboard_title: "Panel"
+      dashboard_desc: "Vista general de ingresos, gastos y saldo. Gráficos de flujo de caja y gastos por categoría."
+      expenses_title: "Gastos"
+      expenses_desc: "Registra gastos con categorías y métodos de pago. Soporte para cuotas y gastos recurrentes."
+      incomes_title: "Ingresos"
+      incomes_desc: "Controla tus fuentes de ingreso: salario, freelance, dividendos y otros."
+      credit_cards_title: "Tarjetas de Crédito"
+      credit_cards_desc: "Monitorea facturas, límites y vencimientos de todas tus tarjetas."
+      bank_accounts_title: "Cuentas Bancarias"
+      bank_accounts_desc: "Gestiona saldos y rendimientos con tasas actualizadas automáticamente."
+      investments_title: "Inversiones"
+      investments_desc: "Portafolio de acciones, crypto y fondos con actualización automática de precios via API."
+      possessions_title: "Patrimonio"
+      possessions_desc: "Registra y sigue el valor de bienes como inmuebles, vehículos y electrónica."
+      forecast_title: "Proyección"
+      forecast_desc: "Ve proyecciones futuras basadas en gastos recurrentes y en cuotas."
+      categories_title: "Categorías & Beneficiarios"
+      categories_desc: "Organiza tus gastos con categorías y beneficiarios personalizados."
+      trust_free: "Gratis para siempre"
+      trust_no_card: "Sin tarjeta de crédito"
+      trust_private: "Tus datos son tuyos"
+      how_title: "Cómo funciona"
+      how_subtitle: "Empieza en minutos"
+      step1_title: "Crea tu cuenta"
+      step1_desc: "Regístrate en segundos, sin tarjeta."
+      step2_title: "Agrega tus finanzas"
+      step2_desc: "Ingresa gastos, ingresos, tarjetas e inversiones."
+      step3_title: "Obtén insights"
+      step3_desc: "Ve gráficos, saldo y proyecciones futuras."
+      cta_title: "¿Listo para empezar?"
+      cta_description: "Crea tu cuenta gratis y toma el control total de tus finanzas."
+      cta_button: "Crear cuenta gratis"
+      cta_signin: "Iniciar sesión"
+      cta_signin_prefix: "¿Ya tienes cuenta?"
+      cta_benefit1: "Visión financiera completa"
+      cta_benefit2: "Actualización automática de precios"
+      cta_benefit3: "Gratis, para siempre"
+
+  # Flash messages
+  controllers:
+    settings:
+      profile_saved: "Configuración guardada correctamente."
+      password_updated: "Contraseña actualizada correctamente."
+    expenses:
+      created: "Gasto agregado."
+      created_installments: "Gasto agregado en %{count} cuotas."
+      updated: "Gasto actualizado."
+      destroyed: "Gasto eliminado."
+    incomes:
+      created: "Ingreso agregado."
+      updated: "Ingreso actualizado."
+      destroyed: "Ingreso eliminado."
+    credit_cards:
+      created: "Tarjeta de crédito agregada."
+      updated: "Tarjeta de crédito actualizada."
+      destroyed: "Tarjeta de crédito eliminada."
+    bank_accounts:
+      created: "Cuenta bancaria agregada."
+      updated: "Cuenta bancaria actualizada."
+      destroyed: "Cuenta bancaria eliminada."
+    investments:
+      created: "Inversión agregada."
+      updated: "Inversión actualizada."
+      destroyed: "Inversión eliminada."
+      price_queued_single: "Actualización de precio programada para %{name}."
+      price_queued_all: "Actualización de precios programada para todas las inversiones."
+      price_already_fresh: "El precio de %{name} ya está actualizado."
+      prices_already_fresh: "Todos los precios ya están actualizados."
+    categories:
+      created: "Categoría creada."
+      updated: "Categoría actualizada."
+      destroyed: "Categoría eliminada."
+    payees:
+      created: "Beneficiario creado."
+      updated: "Beneficiario actualizado."
+      destroyed: "Beneficiario eliminado."
+    possessions:
+      created: "Bien agregado."
+      updated: "Bien actualizado."
+      destroyed: "Bien eliminado."

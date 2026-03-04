@@ -471,6 +471,7 @@ pt-BR:
       preferences_section: "Preferências"
       language_english: "English"
       language_pt_br: "Português (Brasil)"
+      language_es: "Español"
 
   shared:
     empty_state:

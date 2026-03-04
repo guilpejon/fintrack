@@ -29,7 +29,7 @@ class User < ApplicationRecord
     )
   end
 
-  validates :locale, inclusion: { in: %w[en pt-BR] }
+  validates :locale, inclusion: { in: %w[en pt-BR es] }
 
   has_many :expenses, dependent: :destroy
   has_many :incomes, dependent: :destroy
