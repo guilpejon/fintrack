@@ -9,7 +9,8 @@
       "Bash(chmod +x:*)",
       "Bash(grep:*)",
       "Bash(bin/rails runner:*)",
-      "Bash(bundle exec:*)"
+      "Bash(bundle exec:*)",
+      "Bash(ls:*)"
     ]
   }
 }

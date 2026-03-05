@@ -21,7 +21,7 @@ class ApplicationController < ActionController::Base
       current_user.incomes.maximum(:date)
     ].compact.max
     latest_month = latest_entry&.beginning_of_month
-    @max_date = [ today + 12.months, latest_month ].compact.max
+    @max_date = [ Date.current + 12.months, latest_month ].compact.max
 
     current_month = Date.current.beginning_of_month
 
