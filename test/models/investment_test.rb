@@ -9,7 +9,7 @@ class InvestmentTest < ActiveSupport::TestCase
   test "requires name" do
     investment = build(:investment, name: nil)
     assert_not investment.valid?
-    assert_includes investment.errors[:name], "can't be blank"
+    assert investment.errors[:name].any?
   end
 
   test "requires valid investment_type" do

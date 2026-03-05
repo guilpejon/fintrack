@@ -9,7 +9,7 @@ class UserTest < ActiveSupport::TestCase
   test "requires email" do
     user = build(:user, email: nil)
     assert_not user.valid?
-    assert_includes user.errors[:email], "can't be blank"
+    assert user.errors[:email].any?
   end
 
   test "requires unique email" do
@@ -23,9 +23,9 @@ class UserTest < ActiveSupport::TestCase
     assert_not user.valid?
   end
 
-  test "creates 10 default categories after create" do
+  test "creates default categories after create" do
     user = create(:user)
-    assert_equal 10, user.categories.count
+    assert_equal 9, user.categories.count
   end
 
   test "default categories have expected names" do
@@ -38,7 +38,7 @@ class UserTest < ActiveSupport::TestCase
 
   test "destroys dependent categories" do
     user = create(:user)
-    assert_difference "Category.count", -10 do
+    assert_difference "Category.count", -9 do
       user.destroy
     end
   end

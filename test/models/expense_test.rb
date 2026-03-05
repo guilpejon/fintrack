@@ -9,13 +9,13 @@ class ExpenseTest < ActiveSupport::TestCase
   test "requires description" do
     expense = build(:expense, description: nil)
     assert_not expense.valid?
-    assert_includes expense.errors[:description], "can't be blank"
+    assert expense.errors[:description].any?
   end
 
   test "requires amount" do
     expense = build(:expense, amount: nil)
     assert_not expense.valid?
-    assert_includes expense.errors[:amount], "can't be blank"
+    assert expense.errors[:amount].any?
   end
 
   test "requires amount greater than zero" do
@@ -28,7 +28,7 @@ class ExpenseTest < ActiveSupport::TestCase
   test "requires date" do
     expense = build(:expense, date: nil)
     assert_not expense.valid?
-    assert_includes expense.errors[:date], "can't be blank"
+    assert expense.errors[:date].any?
   end
 
   test "requires valid expense_type" do

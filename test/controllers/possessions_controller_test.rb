@@ -45,7 +45,7 @@ class PossessionsControllerTest < ActionDispatch::IntegrationTest
       }
     end
     assert_redirected_to possessions_path
-    assert_equal "Possession added.", flash[:notice]
+    assert_equal I18n.t("controllers.possessions.created"), flash[:notice]
   end
 
   test "POST create with invalid params re-renders new" do
@@ -64,7 +64,7 @@ class PossessionsControllerTest < ActionDispatch::IntegrationTest
       possession: { name: "Updated Name" }
     }
     assert_redirected_to possessions_path
-    assert_equal "Possession updated.", flash[:notice]
+    assert_equal I18n.t("controllers.possessions.updated"), flash[:notice]
     assert_equal "Updated Name", @possession.reload.name
   end
 
@@ -82,7 +82,7 @@ class PossessionsControllerTest < ActionDispatch::IntegrationTest
       delete possession_path(@possession)
     end
     assert_redirected_to possessions_path
-    assert_equal "Possession removed.", flash[:notice]
+    assert_equal I18n.t("controllers.possessions.destroyed"), flash[:notice]
   end
 
   test "cannot access other user's possession" do

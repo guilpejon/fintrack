@@ -37,7 +37,7 @@ class CategoriesControllerTest < ActionDispatch::IntegrationTest
       }
     end
     assert_redirected_to categories_path
-    assert_equal "Category created.", flash[:notice]
+    assert_equal I18n.t("controllers.categories.created"), flash[:notice]
   end
 
   test "POST create with invalid params re-renders new" do
@@ -56,7 +56,7 @@ class CategoriesControllerTest < ActionDispatch::IntegrationTest
       category: { name: "Updated Name" }
     }
     assert_redirected_to categories_path
-    assert_equal "Category updated.", flash[:notice]
+    assert_equal I18n.t("controllers.categories.updated"), flash[:notice]
     assert_equal "Updated Name", @category.reload.name
   end
 
@@ -74,7 +74,7 @@ class CategoriesControllerTest < ActionDispatch::IntegrationTest
       delete category_path(@category)
     end
     assert_redirected_to categories_path
-    assert_equal "Category deleted.", flash[:notice]
+    assert_equal I18n.t("controllers.categories.destroyed"), flash[:notice]
   end
 
   test "cannot access other user's category" do
@@ -83,6 +83,24 @@ class CategoriesControllerTest < ActionDispatch::IntegrationTest
 
     sign_in @user
     get edit_category_path(other_category)
+    assert_response :not_found
+  end
+
+  test "cannot update other user's category" do
+    other_user = create(:user)
+    other_category = other_user.categories.first
+
+    sign_in @user
+    patch category_path(other_category), params: { category: { name: "Hacked" } }
+    assert_response :not_found
+  end
+
+  test "cannot delete other user's category" do
+    other_user = create(:user)
+    other_category = other_user.categories.first
+
+    sign_in @user
+    delete category_path(other_category)
     assert_response :not_found
   end
 end

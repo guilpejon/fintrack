@@ -10,7 +10,8 @@
       "Bash(grep:*)",
       "Bash(bin/rails runner:*)",
       "Bash(bundle exec:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(bin/rails routes:*)"
     ]
   }
 }

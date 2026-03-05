@@ -1,6 +1,7 @@
 require "test_helper"
 
 class IncomesControllerTest < ActionDispatch::IntegrationTest
+  include ActiveJob::TestHelper
   setup do
     @user = create(:user)
     @income = create(:income, user: @user)
@@ -42,7 +43,7 @@ class IncomesControllerTest < ActionDispatch::IntegrationTest
       }
     end
     assert_redirected_to incomes_path
-    assert_equal "Income added.", flash[:notice]
+    assert_equal I18n.t("controllers.incomes.created"), flash[:notice]
   end
 
   test "POST create with invalid params re-renders new" do
@@ -61,7 +62,7 @@ class IncomesControllerTest < ActionDispatch::IntegrationTest
       income: { description: "Updated salary" }
     }
     assert_redirected_to incomes_path
-    assert_equal "Income updated.", flash[:notice]
+    assert_equal I18n.t("controllers.incomes.updated"), flash[:notice]
     assert_equal "Updated salary", @income.reload.description
   end
 
@@ -79,7 +80,7 @@ class IncomesControllerTest < ActionDispatch::IntegrationTest
       delete income_path(@income)
     end
     assert_redirected_to incomes_path
-    assert_equal "Income deleted.", flash[:notice]
+    assert_equal I18n.t("controllers.incomes.destroyed"), flash[:notice]
   end
 
   test "cannot access other user's income" do
@@ -88,6 +89,57 @@ class IncomesControllerTest < ActionDispatch::IntegrationTest
 
     sign_in @user
     get edit_income_path(other_income)
+    assert_response :not_found
+  end
+
+  test "POST create recurring income enqueues GenerateRecurringJob" do
+    sign_in @user
+    assert_enqueued_with(job: Incomes::GenerateRecurringJob) do
+      post incomes_path, params: {
+        income: {
+          description: "Monthly Salary",
+          amount: 5000.00,
+          date: Date.current,
+          income_type: "salary",
+          recurring: true,
+          recurrence_day: 5
+        }
+      }
+    end
+  end
+
+  test "DELETE destroy with delete_following removes recurring future incomes" do
+    template = create(:income, user: @user, recurring: true, date: 2.months.ago)
+    future1 = create(:income, user: @user, recurring_source_id: template.id, date: 1.month.from_now)
+    future2 = create(:income, user: @user, recurring_source_id: template.id, date: 2.months.from_now)
+    past = create(:income, user: @user, recurring_source_id: template.id, date: 1.month.ago)
+
+    sign_in @user
+    delete income_path(future1), params: { delete_following: "1" }
+    assert_redirected_to incomes_path
+
+    assert_not Income.exists?(future1.id)
+    assert_not Income.exists?(future2.id)
+    assert Income.exists?(past.id)
+  end
+
+  test "cannot update other user's income" do
+    other_user = create(:user)
+    other_income = create(:income, user: other_user)
+
+    sign_in @user
+    patch income_path(other_income), params: { income: { description: "Hacked" } }
+    assert_response :not_found
+  end
+
+  test "cannot delete other user's income" do
+    other_user = create(:user)
+    other_income = create(:income, user: other_user)
+
+    sign_in @user
+    assert_no_difference "Income.count" do
+      delete income_path(other_income)
+    end
     assert_response :not_found
   end
 end

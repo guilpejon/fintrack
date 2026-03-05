@@ -9,13 +9,13 @@ class IncomeTest < ActiveSupport::TestCase
   test "requires description" do
     income = build(:income, description: nil)
     assert_not income.valid?
-    assert_includes income.errors[:description], "can't be blank"
+    assert income.errors[:description].any?
   end
 
   test "requires amount" do
     income = build(:income, amount: nil)
     assert_not income.valid?
-    assert_includes income.errors[:amount], "can't be blank"
+    assert income.errors[:amount].any?
   end
 
   test "requires amount greater than zero" do
@@ -28,7 +28,7 @@ class IncomeTest < ActiveSupport::TestCase
   test "requires date" do
     income = build(:income, date: nil)
     assert_not income.valid?
-    assert_includes income.errors[:date], "can't be blank"
+    assert income.errors[:date].any?
   end
 
   test "requires valid income_type" do

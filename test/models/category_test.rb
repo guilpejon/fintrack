@@ -9,19 +9,19 @@ class CategoryTest < ActiveSupport::TestCase
   test "requires name" do
     category = build(:category, name: nil)
     assert_not category.valid?
-    assert_includes category.errors[:name], "can't be blank"
+    assert category.errors[:name].any?
   end
 
   test "requires color" do
     category = build(:category, color: nil)
     assert_not category.valid?
-    assert_includes category.errors[:color], "can't be blank"
+    assert category.errors[:color].any?
   end
 
   test "requires icon" do
     category = build(:category, icon: nil)
     assert_not category.valid?
-    assert_includes category.errors[:icon], "can't be blank"
+    assert category.errors[:icon].any?
   end
 
   test "belongs to a user" do

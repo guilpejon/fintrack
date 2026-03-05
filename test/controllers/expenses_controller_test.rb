@@ -1,6 +1,7 @@
 require "test_helper"
 
 class ExpensesControllerTest < ActionDispatch::IntegrationTest
+  include ActiveJob::TestHelper
   setup do
     @user = create(:user)
     @category = @user.categories.first
@@ -44,7 +45,7 @@ class ExpensesControllerTest < ActionDispatch::IntegrationTest
       }
     end
     assert_redirected_to expenses_path
-    assert_equal "Expense added.", flash[:notice]
+    assert_equal I18n.t("controllers.expenses.created"), flash[:notice]
   end
 
   test "POST create with invalid params re-renders new" do
@@ -63,7 +64,7 @@ class ExpensesControllerTest < ActionDispatch::IntegrationTest
       expense: { description: "Updated description" }
     }
     assert_redirected_to expenses_path
-    assert_equal "Expense updated.", flash[:notice]
+    assert_equal I18n.t("controllers.expenses.updated"), flash[:notice]
     assert_equal "Updated description", @expense.reload.description
   end
 
@@ -81,7 +82,7 @@ class ExpensesControllerTest < ActionDispatch::IntegrationTest
       delete expense_path(@expense)
     end
     assert_redirected_to expenses_path
-    assert_equal "Expense deleted.", flash[:notice]
+    assert_equal I18n.t("controllers.expenses.destroyed"), flash[:notice]
   end
 
   test "cannot access other user's expense" do
@@ -127,7 +128,7 @@ class ExpensesControllerTest < ActionDispatch::IntegrationTest
       }
     end
     assert_redirected_to expenses_path
-    assert_equal "Expense added in 3 installments.", flash[:notice]
+    assert_equal I18n.t("controllers.expenses.created_installments", count: 3), flash[:notice]
   end
 
   test "POST create with multiple installments assigns same group_id" do
@@ -203,5 +204,80 @@ class ExpensesControllerTest < ActionDispatch::IntegrationTest
       }
     end
     assert_response :unprocessable_entity
+  end
+
+  test "POST create recurring expense enqueues GenerateRecurringJob" do
+    sign_in @user
+    assert_enqueued_with(job: Expenses::GenerateRecurringJob) do
+      post expenses_path, params: {
+        expense: {
+          description: "Monthly Rent",
+          amount: 1500.00,
+          date: Date.current,
+          expense_type: "fixed",
+          category_id: @category.id,
+          recurring: true,
+          recurrence_day: 5
+        }
+      }
+    end
+  end
+
+  test "PATCH update_status cycles payment status" do
+    sign_in @user
+    @expense.update!(payment_status: "pending")
+    patch update_status_expense_path(@expense)
+    assert_equal "scheduled", @expense.reload.payment_status
+  end
+
+  test "PATCH update_status cycles back to pending from paid" do
+    sign_in @user
+    @expense.update!(payment_status: "paid")
+    patch update_status_expense_path(@expense)
+    assert_equal "pending", @expense.reload.payment_status
+  end
+
+  test "DELETE destroy with delete_following removes recurring future expenses" do
+    template = create(:expense, user: @user, category: @category, recurring: true, date: 2.months.ago)
+    future1 = create(:expense, user: @user, category: @category, recurring_source_id: template.id, date: 1.month.from_now)
+    future2 = create(:expense, user: @user, category: @category, recurring_source_id: template.id, date: 2.months.from_now)
+    past = create(:expense, user: @user, category: @category, recurring_source_id: template.id, date: 1.month.ago)
+
+    sign_in @user
+    delete expense_path(future1), params: { delete_following: "1" }
+    assert_redirected_to expenses_path
+
+    assert_not Expense.exists?(future1.id)
+    assert_not Expense.exists?(future2.id)
+    assert Expense.exists?(past.id)
+  end
+
+  test "DELETE destroy with delete_following for installments removes from that number onward" do
+    group_id = SecureRandom.uuid
+    inst1 = create(:expense, user: @user, category: @category, installment_group_id: group_id, installment_number: 1, total_installments: 3)
+    inst2 = create(:expense, user: @user, category: @category, installment_group_id: group_id, installment_number: 2, total_installments: 3)
+    inst3 = create(:expense, user: @user, category: @category, installment_group_id: group_id, installment_number: 3, total_installments: 3)
+
+    sign_in @user
+    delete expense_path(inst2), params: { delete_following: "1" }
+
+    assert Expense.exists?(inst1.id)
+    assert_not Expense.exists?(inst2.id)
+    assert_not Expense.exists?(inst3.id)
+    assert_equal 1, inst1.reload.total_installments
+  end
+
+  test "DELETE destroy single installment renumbers remaining" do
+    group_id = SecureRandom.uuid
+    inst1 = create(:expense, user: @user, category: @category, installment_group_id: group_id, installment_number: 1, total_installments: 3)
+    inst2 = create(:expense, user: @user, category: @category, installment_group_id: group_id, installment_number: 2, total_installments: 3)
+    inst3 = create(:expense, user: @user, category: @category, installment_group_id: group_id, installment_number: 3, total_installments: 3)
+
+    sign_in @user
+    delete expense_path(inst1)
+
+    assert_equal 1, inst2.reload.installment_number
+    assert_equal 2, inst3.reload.installment_number
+    assert_equal 2, inst2.reload.total_installments
   end
 end

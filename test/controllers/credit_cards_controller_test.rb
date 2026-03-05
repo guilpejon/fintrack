@@ -45,7 +45,7 @@ class CreditCardsControllerTest < ActionDispatch::IntegrationTest
       }
     end
     assert_redirected_to credit_cards_path
-    assert_equal "Credit card added.", flash[:notice]
+    assert_equal I18n.t("controllers.credit_cards.created"), flash[:notice]
   end
 
   test "POST create with invalid params re-renders new" do
@@ -64,7 +64,7 @@ class CreditCardsControllerTest < ActionDispatch::IntegrationTest
       credit_card: { name: "Updated Card" }
     }
     assert_redirected_to credit_cards_path
-    assert_equal "Credit card updated.", flash[:notice]
+    assert_equal I18n.t("controllers.credit_cards.updated"), flash[:notice]
     assert_equal "Updated Card", @credit_card.reload.name
   end
 
@@ -82,7 +82,7 @@ class CreditCardsControllerTest < ActionDispatch::IntegrationTest
       delete credit_card_path(@credit_card)
     end
     assert_redirected_to credit_cards_path
-    assert_equal "Credit card removed.", flash[:notice]
+    assert_equal I18n.t("controllers.credit_cards.destroyed"), flash[:notice]
   end
 
   test "cannot access other user's credit card" do
@@ -91,6 +91,26 @@ class CreditCardsControllerTest < ActionDispatch::IntegrationTest
 
     sign_in @user
     get edit_credit_card_path(other_card)
+    assert_response :not_found
+  end
+
+  test "cannot update other user's credit card" do
+    other_user = create(:user)
+    other_card = create(:credit_card, user: other_user)
+
+    sign_in @user
+    patch credit_card_path(other_card), params: { credit_card: { name: "Hacked" } }
+    assert_response :not_found
+  end
+
+  test "cannot delete other user's credit card" do
+    other_user = create(:user)
+    other_card = create(:credit_card, user: other_user)
+
+    sign_in @user
+    assert_no_difference "CreditCard.count" do
+      delete credit_card_path(other_card)
+    end
     assert_response :not_found
   end
 end

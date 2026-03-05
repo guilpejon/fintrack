@@ -47,7 +47,7 @@ class BankAccountsControllerTest < ActionDispatch::IntegrationTest
       }
     end
     assert_redirected_to bank_accounts_path
-    assert_equal "Bank account added.", flash[:notice]
+    assert_equal I18n.t("controllers.bank_accounts.created"), flash[:notice]
   end
 
   test "POST create with CDI rate creates bank account" do
@@ -89,7 +89,7 @@ class BankAccountsControllerTest < ActionDispatch::IntegrationTest
       bank_account: { name: "Updated Name" }
     }
     assert_redirected_to bank_accounts_path
-    assert_equal "Bank account updated.", flash[:notice]
+    assert_equal I18n.t("controllers.bank_accounts.updated"), flash[:notice]
     assert_equal "Updated Name", @bank_account.reload.name
   end
 
@@ -107,7 +107,7 @@ class BankAccountsControllerTest < ActionDispatch::IntegrationTest
       delete bank_account_path(@bank_account)
     end
     assert_redirected_to bank_accounts_path
-    assert_equal "Bank account removed.", flash[:notice]
+    assert_equal I18n.t("controllers.bank_accounts.destroyed"), flash[:notice]
   end
 
   test "cannot access other user's bank account" do
@@ -119,10 +119,23 @@ class BankAccountsControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
-  test "POST refresh_cdi_rate redirects with notice" do
+  test "cannot update other user's bank account" do
+    other_user = create(:user)
+    other_account = create(:bank_account, user: other_user)
+
     sign_in @user
-    post refresh_cdi_rate_bank_accounts_path
-    assert_redirected_to bank_accounts_path
-    assert_equal "CDI rate refresh queued.", flash[:notice]
+    patch bank_account_path(other_account), params: { bank_account: { name: "Hacked" } }
+    assert_response :not_found
+  end
+
+  test "cannot delete other user's bank account" do
+    other_user = create(:user)
+    other_account = create(:bank_account, user: other_user)
+
+    sign_in @user
+    assert_no_difference "BankAccount.count" do
+      delete bank_account_path(other_account)
+    end
+    assert_response :not_found
   end
 end
