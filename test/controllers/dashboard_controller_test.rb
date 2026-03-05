@@ -6,7 +6,7 @@ class DashboardControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "redirects to sign in when not authenticated" do
-    get root_path
+    get expenses_path
     assert_redirected_to new_user_session_path
   end
 
