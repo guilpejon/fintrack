@@ -75,4 +75,13 @@ class IncomeTest < ActiveSupport::TestCase
     assert_equal recent, ordered.first
     assert_equal old, ordered.last
   end
+
+  test "recurring scope returns only recurring incomes" do
+    user = create(:user)
+    recurring = create(:income, user: user, recurring: true, recurrence_day: 5)
+    one_time = create(:income, user: user, recurring: false)
+
+    assert_includes Income.where(recurring: true), recurring
+    assert_not_includes Income.where(recurring: true), one_time
+  end
 end

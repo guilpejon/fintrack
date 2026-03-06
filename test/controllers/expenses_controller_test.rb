@@ -346,6 +346,48 @@ class ExpensesControllerTest < ActionDispatch::IntegrationTest
     assert_equal 200.00, non_recurring.reload.amount
   end
 
+  test "PATCH update turning off recurring on template destroys future replicas" do
+    template = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, date: 2.months.ago)
+    past_replica = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, recurring_source_id: template.id, date: 1.month.ago)
+    future_replica = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, recurring_source_id: template.id, date: 1.month.from_now)
+
+    sign_in @user
+    patch expense_path(template), params: { expense: { recurring: "0", expense_type: "fixed" } }
+
+    assert_redirected_to expenses_path
+    assert_not Expense.exists?(future_replica.id)
+    assert Expense.exists?(past_replica.id)
+    assert_not template.reload.recurring?
+  end
+
+  test "PATCH update turning off recurring on replica destroys future siblings and turns off template" do
+    template = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, date: 3.months.ago)
+    past_replica = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, recurring_source_id: template.id, date: 2.months.ago)
+    current_replica = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, recurring_source_id: template.id, date: 1.month.ago)
+    future_replica = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, recurring_source_id: template.id, date: 1.month.from_now)
+
+    sign_in @user
+    patch expense_path(current_replica), params: { expense: { recurring: "0", expense_type: "fixed" } }
+
+    assert_redirected_to expenses_path
+    assert_not Expense.exists?(future_replica.id)
+    assert Expense.exists?(past_replica.id)
+    assert_not template.reload.recurring?
+  end
+
+  test "PATCH update_status responds via turbo_stream" do
+    sign_in @user
+    @expense.update!(payment_status: "pending")
+    patch update_status_expense_path(@expense), headers: { "Accept" => "text/vnd.turbo-stream.html" }
+    assert_response :success
+  end
+
+  test "DELETE destroy responds via turbo_stream" do
+    sign_in @user
+    delete expense_path(@expense), headers: { "Accept" => "text/vnd.turbo-stream.html" }
+    assert_response :success
+  end
+
   test "DELETE destroy with delete_following removes recurring future expenses" do
     template = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, date: 2.months.ago)
     future1 = create(:expense, user: @user, category: @category, recurring_source_id: template.id, date: 1.month.from_now)

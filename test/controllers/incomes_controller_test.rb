@@ -142,4 +142,39 @@ class IncomesControllerTest < ActionDispatch::IntegrationTest
     end
     assert_response :not_found
   end
+
+  test "PATCH update turning off recurring on template destroys future replicas" do
+    template = create(:income, user: @user, recurring: true, date: 2.months.ago)
+    past_replica = create(:income, user: @user, recurring_source_id: template.id, date: 1.month.ago)
+    future_replica = create(:income, user: @user, recurring_source_id: template.id, date: 1.month.from_now)
+
+    sign_in @user
+    patch income_path(template), params: { income: { recurring: "0" } }
+
+    assert_redirected_to incomes_path
+    assert_not Income.exists?(future_replica.id)
+    assert Income.exists?(past_replica.id)
+    assert_not template.reload.recurring?
+  end
+
+  test "PATCH update turning off recurring on replica destroys future siblings and turns off template" do
+    template = create(:income, user: @user, recurring: true, date: 3.months.ago)
+    past_replica = create(:income, user: @user, recurring_source_id: template.id, date: 2.months.ago)
+    current_replica = create(:income, user: @user, recurring_source_id: template.id, date: 1.month.ago, recurring: true)
+    future_replica = create(:income, user: @user, recurring_source_id: template.id, date: 1.month.from_now)
+
+    sign_in @user
+    patch income_path(current_replica), params: { income: { recurring: "0" } }
+
+    assert_redirected_to incomes_path
+    assert_not Income.exists?(future_replica.id)
+    assert Income.exists?(past_replica.id)
+    assert_not template.reload.recurring?
+  end
+
+  test "DELETE destroy turbo_stream removes income element" do
+    sign_in @user
+    delete income_path(@income), headers: { "Accept" => "text/vnd.turbo-stream.html" }
+    assert_response :success
+  end
 end

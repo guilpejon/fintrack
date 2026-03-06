@@ -73,4 +73,25 @@ class User::SettingsControllerTest < ActionDispatch::IntegrationTest
     }
     assert_response :unprocessable_entity
   end
+
+  test "PATCH update password for OAuth user without password_set skips current_password check" do
+    oauth_user = create(:user, provider: "google_oauth2", uid: "oauth123", password_set: false)
+    sign_in oauth_user
+    patch user_settings_path, params: {
+      section: "password",
+      user: {
+        current_password: "",
+        password: "newpassword456",
+        password_confirmation: "newpassword456"
+      }
+    }
+    assert_redirected_to edit_user_settings_path
+    assert oauth_user.reload.valid_password?("newpassword456")
+    assert oauth_user.reload.password_set?
+  end
+
+  test "cannot access settings when not authenticated" do
+    patch user_settings_path, params: { user: { name: "Hacker" } }
+    assert_redirected_to new_user_session_path
+  end
 end
