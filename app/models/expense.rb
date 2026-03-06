@@ -12,8 +12,9 @@ class Expense < ApplicationRecord
   validates :amount, presence: true, numericality: { greater_than: 0 }
   validates :date, presence: true
   validates :expense_type, inclusion: { in: TYPES }
-  validates :recurrence_day, numericality: { in: 1..28 }, allow_nil: true
+  validates :recurrence_day, numericality: { in: 1..31 }, allow_nil: true
   validate :recurring_only_allowed_for_fixed
+  validate :installment_cannot_be_recurring
   validates :payment_method, inclusion: { in: PAYMENT_METHODS }
   validates :total_installments, numericality: { in: 1..60 }
   validates :installment_number, numericality: { in: 1..60 }
@@ -57,6 +58,10 @@ class Expense < ApplicationRecord
 
   def recurring_only_allowed_for_fixed
     errors.add(:recurring, :invalid) if recurring? && expense_type == "variable"
+  end
+
+  def installment_cannot_be_recurring
+    errors.add(:recurring, :invalid) if recurring? && installment?
   end
 
   def set_default_payment_status

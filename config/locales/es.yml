@@ -178,6 +178,10 @@ es:
       per_installment: "Por cuota:"
       installment_label: "Cuota"
       installment_note: "— solo esta cuota será actualizada"
+      installment_no_recurring: "No disponible para gastos en cuotas"
+      installment_locked_note: "El tipo y método de pago están bloqueados para mantener la consistencia entre cuotas."
+      recurring_locked_note: "El tipo y método de pago están bloqueados. Para cambiar la tarjeta, selecciónala arriba."
+      recurring_edit_warning: "Los cambios se reflejarán en todas las recurrencias futuras."
       recurring: "Gasto recurrente"
       add: "Agregar Gasto"
       update: "Actualizar Gasto"
@@ -193,6 +197,7 @@ es:
         question: "¿Deseas eliminar solo esta ocurrencia o esta y todas las siguientes?"
         confirm: "Eliminar solo esta"
         this_and_following: "Eliminar esta y las siguientes"
+      edit_locked: "No se pueden editar gastos recurrentes o en cuotas de meses anteriores"
       installment_delete:
         title: "Eliminar gasto en cuotas"
         question: "¿Deseas eliminar solo esta cuota o esta y todas las restantes?"
@@ -625,6 +630,7 @@ es:
       created_installments: "Gasto agregado en %{count} cuotas."
       updated: "Gasto actualizado."
       destroyed: "Gasto eliminado."
+      edit_locked: "Los gastos recurrentes y en cuotas de meses anteriores no pueden editarse."
     incomes:
       created: "Ingreso agregado."
       updated: "Ingreso actualizado."

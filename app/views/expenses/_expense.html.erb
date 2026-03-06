@@ -58,9 +58,16 @@
       </div>
 
       <%# Actions: edit + delete %>
+      <% edit_locked = (expense.recurring? || expense.installment?) && expense.date < Date.current.beginning_of_month %>
       <div class="flex items-center gap-1 flex-shrink-0">
-        <%= link_to edit_expense_path(expense), class: "p-1.5 rounded-lg hover:bg-white/5 transition-colors", style: "color: #8892A4;" do %>
-          <%= svg_icon "edit", css_class: "w-3.5 h-3.5" %>
+        <% if edit_locked %>
+          <span class="p-1.5 rounded-lg opacity-30 cursor-not-allowed" style="color: #8892A4;" title="<%= t('expenses.expense.edit_locked') %>">
+            <%= svg_icon "edit", css_class: "w-3.5 h-3.5" %>
+          </span>
+        <% else %>
+          <%= link_to edit_expense_path(expense), class: "p-1.5 rounded-lg hover:bg-white/5 transition-colors", style: "color: #8892A4;" do %>
+            <%= svg_icon "edit", css_class: "w-3.5 h-3.5" %>
+          <% end %>
         <% end %>
         <%= render "shared/delete_modal_button",
             path: expense_path(expense),

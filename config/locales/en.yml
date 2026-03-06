@@ -137,6 +137,10 @@ en:
       per_installment: "Per installment:"
       installment_label: "Installment"
       installment_note: "— only this installment will be updated"
+      installment_no_recurring: "Not available for installment expenses"
+      installment_locked_note: "Type and payment method are locked to keep all installments consistent."
+      recurring_locked_note: "Type and payment method are locked. To change the credit card, select it above."
+      recurring_edit_warning: "Changes will be reflected in all future recurrences."
       recurring: "Recurring expense"
       add: "Add Expense"
       update: "Update Expense"
@@ -152,6 +156,7 @@ en:
         question: "Do you want to delete only this occurrence or this and all following ones?"
         confirm: "Delete only this"
         this_and_following: "Delete this and following"
+      edit_locked: "Cannot edit past recurring or installment expenses"
       installment_delete:
         title: "Delete installment expense"
         question: "Do you want to delete only this installment or this and all remaining ones?"
@@ -584,6 +589,7 @@ en:
       created_installments: "Expense added in %{count} installments."
       updated: "Expense updated."
       destroyed: "Expense deleted."
+      edit_locked: "Past recurring and installment expenses cannot be edited."
     incomes:
       created: "Income added."
       updated: "Income updated."

@@ -178,6 +178,10 @@ pt-BR:
       per_installment: "Por parcela:"
       installment_label: "Parcela"
       installment_note: "— somente esta parcela será atualizada"
+      installment_no_recurring: "Não disponível para despesas parceladas"
+      installment_locked_note: "Tipo e método de pagamento são fixos para manter a consistência entre as parcelas."
+      recurring_locked_note: "Tipo e método de pagamento são fixos. Para trocar o cartão de crédito, selecione acima."
+      recurring_edit_warning: "As alterações serão refletidas em todas as ocorrências futuras."
       recurring: "Despesa recorrente"
       add: "Adicionar Despesa"
       update: "Atualizar Despesa"
@@ -193,6 +197,7 @@ pt-BR:
         question: "Deseja excluir apenas esta ocorrência ou esta e todas as seguintes?"
         confirm: "Excluir apenas esta"
         this_and_following: "Excluir esta e as seguintes"
+      edit_locked: "Não é possível editar despesas recorrentes ou parceladas de meses anteriores"
       installment_delete:
         title: "Excluir despesa parcelada"
         question: "Deseja excluir apenas esta parcela ou esta e todas as restantes?"
@@ -625,6 +630,7 @@ pt-BR:
       created_installments: "Despesa adicionada em %{count} parcelas."
       updated: "Despesa atualizada."
       destroyed: "Despesa excluída."
+      edit_locked: "Despesas recorrentes e parceladas de meses anteriores não podem ser editadas."
     incomes:
       created: "Receita adicionada."
       updated: "Receita atualizada."

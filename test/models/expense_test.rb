@@ -47,12 +47,11 @@ class ExpenseTest < ActiveSupport::TestCase
     assert expense.valid?
   end
 
-  test "validates recurrence_day is between 1 and 28" do
-    expense = build(:expense, recurrence_day: 0)
-    assert_not expense.valid?
-
-    expense2 = build(:expense, recurrence_day: 29)
-    assert_not expense2.valid?
+  test "validates recurrence_day is between 1 and 31" do
+    assert_not build(:expense, recurrence_day: 0).valid?
+    assert_not build(:expense, recurrence_day: 32).valid?
+    assert build(:expense, recurrence_day: 29).valid?
+    assert build(:expense, recurrence_day: 31).valid?
   end
 
   test "accepts nil recurrence_day" do
@@ -121,6 +120,17 @@ class ExpenseTest < ActiveSupport::TestCase
 
   test "fixed expense can be recurring" do
     expense = build(:expense, expense_type: "fixed", recurring: true, recurrence_day: 5)
+    assert expense.valid?
+  end
+
+  test "installment expense cannot be recurring" do
+    expense = build(:expense, expense_type: "fixed", recurring: true, total_installments: 3, installment_number: 1)
+    assert_not expense.valid?
+    assert expense.errors[:recurring].any?
+  end
+
+  test "non-installment fixed expense can be recurring" do
+    expense = build(:expense, expense_type: "fixed", recurring: true, total_installments: 1, installment_number: 1, recurrence_day: 5)
     assert expense.valid?
   end
 

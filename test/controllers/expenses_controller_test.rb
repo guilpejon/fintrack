@@ -313,8 +313,46 @@ class ExpensesControllerTest < ActionDispatch::IntegrationTest
     assert_equal "pending", @expense.reload.payment_status
   end
 
+  test "GET edit blocks past-month recurring expense" do
+    past_recurring = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, date: 1.month.ago)
+    sign_in @user
+    get edit_expense_path(past_recurring)
+    assert_redirected_to expenses_path
+    assert_equal I18n.t("controllers.expenses.edit_locked"), flash[:alert]
+  end
+
+  test "GET edit blocks past-month installment expense" do
+    past_installment = create(:expense, user: @user, category: @category, total_installments: 3, installment_number: 1, date: 1.month.ago)
+    sign_in @user
+    get edit_expense_path(past_installment)
+    assert_redirected_to expenses_path
+    assert_equal I18n.t("controllers.expenses.edit_locked"), flash[:alert]
+  end
+
+  test "GET edit allows past-month regular expense" do
+    past_regular = create(:expense, user: @user, category: @category, recurring: false, total_installments: 1, date: 1.month.ago)
+    sign_in @user
+    get edit_expense_path(past_regular)
+    assert_response :success
+  end
+
+  test "GET edit allows current-month recurring expense" do
+    current_recurring = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, date: Date.current)
+    sign_in @user
+    get edit_expense_path(current_recurring)
+    assert_response :success
+  end
+
+  test "PATCH update blocks past-month recurring expense" do
+    past_recurring = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, date: 1.month.ago)
+    sign_in @user
+    patch expense_path(past_recurring), params: { expense: { amount: 999 } }
+    assert_redirected_to expenses_path
+    assert_equal I18n.t("controllers.expenses.edit_locked"), flash[:alert]
+  end
+
   test "PATCH update on recurring template propagates amount to future replicas" do
-    template = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, amount: 100.00, date: 2.months.ago)
+    template = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, amount: 100.00, date: Date.current)
     past_replica = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, recurring_source_id: template.id, amount: 100.00, date: 1.month.ago)
     future_replica = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, recurring_source_id: template.id, amount: 100.00, date: 1.month.from_now)
 
@@ -329,7 +367,7 @@ class ExpensesControllerTest < ActionDispatch::IntegrationTest
 
   test "PATCH update on recurring template propagates category to future replicas" do
     other_category = create(:category, user: @user)
-    template = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, date: 2.months.ago)
+    template = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, date: Date.current)
     past_replica = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, recurring_source_id: template.id, date: 1.month.ago)
     future_replica = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, recurring_source_id: template.id, date: 1.month.from_now)
 
@@ -345,7 +383,7 @@ class ExpensesControllerTest < ActionDispatch::IntegrationTest
   test "PATCH update on recurring replica propagates amount to future replicas of same source" do
     template = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, amount: 100.00, date: 3.months.ago)
     past_replica = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, recurring_source_id: template.id, amount: 100.00, date: 2.months.ago)
-    edited_replica = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, recurring_source_id: template.id, amount: 100.00, date: 1.month.ago)
+    edited_replica = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, recurring_source_id: template.id, amount: 100.00, date: Date.current)
     future_replica = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, recurring_source_id: template.id, amount: 100.00, date: 1.month.from_now)
 
     sign_in @user
@@ -359,7 +397,7 @@ class ExpensesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "PATCH update on recurring template does not propagate unchanged fields" do
-    template = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, amount: 100.00, date: 2.months.ago)
+    template = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, amount: 100.00, date: Date.current)
     future_replica = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, recurring_source_id: template.id, amount: 100.00, date: 1.month.from_now, category_id: @category.id)
 
     sign_in @user
@@ -377,32 +415,34 @@ class ExpensesControllerTest < ActionDispatch::IntegrationTest
     assert_equal 200.00, non_recurring.reload.amount
   end
 
-  test "PATCH update turning off recurring on template destroys future replicas" do
-    template = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, date: 2.months.ago)
-    past_replica = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, recurring_source_id: template.id, date: 1.month.ago)
-    future_replica = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, recurring_source_id: template.id, date: 1.month.from_now)
+  test "PATCH update turning off recurring on template destroys all replicas from following month onwards" do
+    template = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, date: Date.current)
+    same_month_replica = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, recurring_source_id: template.id, date: Date.current + 1.day)
+    later_replica = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, recurring_source_id: template.id, date: 1.month.from_now)
+    future_replica = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, recurring_source_id: template.id, date: 2.months.from_now)
 
     sign_in @user
     patch expense_path(template), params: { expense: { recurring: "0", expense_type: "fixed" } }
 
     assert_redirected_to expenses_path
-    assert_not Expense.exists?(future_replica.id)
-    assert Expense.exists?(past_replica.id)
+    assert Expense.exists?(same_month_replica.id)   # same month as template — kept
+    assert_not Expense.exists?(later_replica.id)    # following month onwards — deleted
+    assert_not Expense.exists?(future_replica.id)   # future — deleted
     assert_not template.reload.recurring?
   end
 
-  test "PATCH update turning off recurring on replica destroys future siblings and turns off template" do
+  test "PATCH update turning off recurring on replica destroys siblings from following month and turns off template" do
     template = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, date: 3.months.ago)
-    past_replica = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, recurring_source_id: template.id, date: 2.months.ago)
-    current_replica = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, recurring_source_id: template.id, date: 1.month.ago)
+    earlier_replica = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, recurring_source_id: template.id, date: 2.months.ago)
+    current_replica = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, recurring_source_id: template.id, date: Date.current)
     future_replica = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, recurring_source_id: template.id, date: 1.month.from_now)
 
     sign_in @user
     patch expense_path(current_replica), params: { expense: { recurring: "0", expense_type: "fixed" } }
 
     assert_redirected_to expenses_path
-    assert_not Expense.exists?(future_replica.id)
-    assert Expense.exists?(past_replica.id)
+    assert Expense.exists?(earlier_replica.id)    # before the edited replica's month — kept
+    assert_not Expense.exists?(future_replica.id) # following month onwards — deleted
     assert_not template.reload.recurring?
   end
 
@@ -447,6 +487,66 @@ class ExpensesControllerTest < ActionDispatch::IntegrationTest
     assert_not Expense.exists?(inst2.id)
     assert_not Expense.exists?(inst3.id)
     assert_equal 1, inst1.reload.total_installments
+  end
+
+  test "PATCH update on recurring template propagates date day to future replicas" do
+    template = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, date: Date.current.change(day: 20))
+    past_replica = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, recurring_source_id: template.id, date: 1.month.ago.change(day: 20))
+    future_replica1 = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, recurring_source_id: template.id, date: 1.month.from_now.change(day: 20))
+    future_replica2 = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, recurring_source_id: template.id, date: 2.months.from_now.change(day: 20))
+
+    sign_in @user
+    patch expense_path(template), params: { expense: { date: Date.current.change(day: 25) } }
+
+    assert_redirected_to expenses_path
+    assert_equal 25, template.reload.date.day
+    assert_equal 25, template.reload.recurrence_day
+    assert_equal 25, future_replica1.reload.date.day
+    assert_equal 25, future_replica2.reload.date.day
+    assert_equal 20, past_replica.reload.date.day  # past replica not updated
+  end
+
+  test "PATCH update on recurring replica propagates date day to future siblings and updates template" do
+    template = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, date: Date.new(2026, 1, 20))
+    past_replica = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, recurring_source_id: template.id, date: Date.new(2026, 2, 20))
+    edited_replica = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, recurring_source_id: template.id, date: Date.new(2026, 3, 20))
+    future_replica = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, recurring_source_id: template.id, date: Date.new(2026, 4, 20))
+
+    sign_in @user
+    patch expense_path(edited_replica), params: { expense: { date: Date.new(2026, 3, 25) } }
+
+    assert_redirected_to expenses_path
+    assert_equal Date.new(2026, 3, 25), edited_replica.reload.date
+    assert_equal Date.new(2026, 4, 25), future_replica.reload.date
+    assert_equal 25, template.reload.recurrence_day              # template recurrence_day updated, date untouched
+    assert_equal Date.new(2026, 1, 20), template.reload.date     # template date itself unchanged
+    assert_equal Date.new(2026, 2, 20), past_replica.reload.date # past replica not updated
+  end
+
+  test "PATCH update on recurring template propagates credit_card_id to future replicas" do
+    credit_card = create(:credit_card, user: @user)
+    other_card = create(:credit_card, user: @user)
+    template = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, payment_method: "credit_card", credit_card_id: credit_card.id, date: Date.current)
+    past_replica = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, recurring_source_id: template.id, payment_method: "credit_card", credit_card_id: credit_card.id, date: 1.month.ago)
+    future_replica = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, recurring_source_id: template.id, payment_method: "credit_card", credit_card_id: credit_card.id, date: 1.month.from_now)
+
+    sign_in @user
+    patch expense_path(template), params: { expense: { credit_card_id: other_card.id } }
+
+    assert_redirected_to expenses_path
+    assert_equal other_card.id, template.reload.credit_card_id
+    assert_equal other_card.id, future_replica.reload.credit_card_id
+    assert_equal credit_card.id, past_replica.reload.credit_card_id  # past replica not updated
+  end
+
+  test "PATCH update on recurring template does not change day when only month changes" do
+    template = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, date: Date.current.change(day: 20))
+    future_replica = create(:expense, user: @user, category: @category, expense_type: "fixed", recurring: true, recurring_source_id: template.id, date: 1.month.from_now.change(day: 20))
+
+    sign_in @user
+    patch expense_path(template), params: { expense: { date: Date.current.change(day: 20) } }
+
+    assert_equal 20, future_replica.reload.date.day  # day unchanged, replica untouched
   end
 
   test "DELETE destroy single installment renumbers remaining" do

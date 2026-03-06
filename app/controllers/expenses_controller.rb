@@ -1,5 +1,6 @@
 class ExpensesController < ApplicationController
   before_action :set_expense, only: %i[edit update destroy update_status]
+  before_action :prevent_locked_edit, only: %i[edit update]
 
   def index
     base = current_user.expenses
@@ -56,16 +57,17 @@ class ExpensesController < ApplicationController
       propagate_payee_to_installment_group!
       propagate_recurring_changes!
       if was_recurring && !@expense.recurring?
+        cutoff = @expense.date.next_month.beginning_of_month
         if source_id.present?
           current_user.expenses
             .where(recurring_source_id: source_id)
-            .where("date > ?", @expense.date)
+            .where("date >= ?", cutoff)
             .destroy_all
           current_user.expenses.find_by(id: source_id)&.update(recurring: false)
         else
           current_user.expenses
             .where(recurring_source_id: @expense.id)
-            .where("date >= ?", Date.today)
+            .where("date >= ?", cutoff)
             .destroy_all
         end
       end
@@ -130,6 +132,12 @@ class ExpensesController < ApplicationController
     @expense = current_user.expenses.find(params[:id])
   end
 
+  def prevent_locked_edit
+    if (@expense.recurring? || @expense.installment?) && @expense.date < Date.current.beginning_of_month
+      redirect_to expenses_path, alert: t("controllers.expenses.edit_locked")
+    end
+  end
+
   def expense_params
     params.require(:expense).permit(
       :description, :amount, :date, :expense_type, :category_id, :credit_card_id,
@@ -152,17 +160,38 @@ class ExpensesController < ApplicationController
 
   def propagate_recurring_changes!
     return unless @expense.recurring? && !@expense.installment?
-    return unless @expense.saved_change_to_amount? || @expense.saved_change_to_category_id?
+    return unless @expense.saved_change_to_amount? || @expense.saved_change_to_category_id? ||
+                  @expense.saved_change_to_date? || @expense.saved_change_to_credit_card_id?
 
     source_id = @expense.recurring_source_id || @expense.id
-    updates = {}
-    updates[:amount] = @expense.amount if @expense.saved_change_to_amount?
-    updates[:category_id] = @expense.category_id if @expense.saved_change_to_category_id?
 
-    current_user.expenses
-      .where(recurring_source_id: source_id)
-      .where("date > ?", Date.today)
-      .update_all(updates)
+    bulk_updates = {}
+    bulk_updates[:amount] = @expense.amount if @expense.saved_change_to_amount?
+    bulk_updates[:category_id] = @expense.category_id if @expense.saved_change_to_category_id?
+    bulk_updates[:credit_card_id] = @expense.credit_card_id if @expense.saved_change_to_credit_card_id?
+
+    if bulk_updates.any?
+      current_user.expenses
+        .where(recurring_source_id: source_id)
+        .where("date > ?", Date.today)
+        .update_all(bulk_updates)
+    end
+
+    if @expense.saved_change_to_date?
+      old_day = @expense.saved_changes[:date][0].day
+      new_day = @expense.date.day
+      if old_day != new_day
+        current_user.expenses
+          .where(recurring_source_id: source_id)
+          .where("date > ?", Date.today)
+          .find_each do |future|
+            future.update_column(:date, future.date.change(day: [ new_day, future.date.end_of_month.day ].min))
+          end
+
+        template = current_user.expenses.find_by(id: source_id)
+        template&.update_column(:recurrence_day, new_day)
+      end
+    end
   end
 
   def propagate_payee_to_installment_group!

@@ -10,7 +10,7 @@ module Expenses
           target = template.date >> i
           next if already_generated?(template, target)
 
-          day = [ template.date.day, target.end_of_month.day ].min
+          day = [ template.recurrence_day || template.date.day, target.end_of_month.day ].min
           template.user.expenses.create!(
             description: template.description,
             amount: template.amount,
