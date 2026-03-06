@@ -19,3 +19,18 @@ html.values-hidden .sensitive-value {
 .sensitive-value {
   transition: filter 0.2s ease;
 }
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+input[type="date"]:focus {
+  outline: none;
+}
+
+input[type="date"] {
+  background-color: #0F1117;
+  border-color: #2A2F45;
+  color: #E2E8F0;
+  outline: none;
+}
