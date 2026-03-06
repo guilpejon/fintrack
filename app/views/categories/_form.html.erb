@@ -26,7 +26,7 @@
   <div>
     <label class="block text-xs font-medium mb-2" style="color: #8892A4;"><%= t("categories.form.icon") %> <span style="color: #FF6B6B;">*</span></label>
     <div class="grid grid-cols-6 gap-2">
-      <% %w[home utensils car heart-pulse gamepad-2 shopping-cart book-open zap plane layers wallet trending-up credit-card bar-chart-2 tag calendar clock repeat filter search paw-print dumbbell coffee gift phone umbrella scissors shirt pill baby].each do |icon_name| %>
+      <% %w[home utensils car heart-pulse gamepad-2 shopping-cart book-open zap plane layers wallet trending-up credit-card bar-chart-2 tag calendar clock repeat music search paw-print dumbbell coffee gift phone umbrella scissors shirt pill baby].each do |icon_name| %>
         <label class="cursor-pointer">
           <%= f.radio_button :icon, icon_name, class: "sr-only peer", id: "icon_#{icon_name}" %>
           <div class="w-10 h-10 rounded-lg flex items-center justify-center border transition-all hover:border-purple-500 peer-checked:border-purple-500 peer-checked:bg-purple-500/10"
